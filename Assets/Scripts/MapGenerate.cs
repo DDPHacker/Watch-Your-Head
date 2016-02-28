@@ -25,18 +25,19 @@ public class MapGenerate : MonoBehaviour {
 		while (true) {
 			c = Random.Range (0, 8);
 			while (true) {
-				l = Random.Range (2, 10);
+				l = Random.Range (2, 8);
 				if (c + l >= col - 1)
 					l = col - 1 - c;
 				for (int i = 0; i < l; i++)
 					block [r, c + i] = 1;
+				c += l;
 				blocknum += l;
-				c += Random.Range (4, 8);
+				c += Random.Range (4, 9);
 				if (c >= col - 1)
 					break;
 			}
 
-			r += Random.Range (2, 5);
+			r += Random.Range (3, 5);
 			if (r >= row - 1)
 				break;
 		}
@@ -51,31 +52,29 @@ public class MapGenerate : MonoBehaviour {
 		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < col; j++) {
 				if (block [i, j] == 1) {
-					cnt += 1;
+					cnt ++;
 					if (cnt == p1) {
 						block [i, j] = 6;
 						SetPosition (PortalTile1, i, j);
-						blocknum--;
+						//blocknum--;
 					}
 					if (cnt == p2) {
 						block [i, j] = 6;
 						SetPosition (PortalTile2, i, j);
-						blocknum--;
+						//blocknum--;
 					}
 				}
 			}
 		}
 		PortalTile1.GetComponent<PortalTile>().getPosition (PortalTile2);
 		PortalTile2.GetComponent<PortalTile>().getPosition (PortalTile1);
-//		Portal1.GetComponent<Portal>().getPosition (Portal2);
-//		Portal2.GetComponent<Portal>().getPosition (Portal1);
 
 		// Set the other kind of tiles
 		int type;
 		for (int i = 0; i < row; i++)
 			for (int j = 0; j < col; j++) {
 				if (block [i, j] == 1) {
-					type = Random.Range (0, 7);
+					type = Random.Range (0, 14);
 					switch (type) {
 					case 2: // StoneTile
 						GameObject stonetile = (GameObject)Instantiate (Resources.Load ("StoneTile"));

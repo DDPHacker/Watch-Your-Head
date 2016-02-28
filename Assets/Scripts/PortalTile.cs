@@ -8,9 +8,12 @@ public class PortalTile : GameTile {
 		isFall = false;
 		type = 2;
 	}
+
 	void OnTriggerEnter2D(Collider2D other){
-		other.gameObject.transform.position = new Vector3 (x, y + 0.32f, 0.0f);
+		if (other.gameObject.tag == "Player")
+			other.gameObject.transform.position = new Vector3 (x, y + 0.32f, 0.0f);
 	}
+
 	public void getPosition(GameObject other)
 	{
 		x = other.transform.position.x;
