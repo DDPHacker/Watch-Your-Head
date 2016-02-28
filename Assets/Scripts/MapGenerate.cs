@@ -104,6 +104,17 @@ public class MapGenerate : MonoBehaviour {
 					}
 				}
 			}
+
+		//Set the Wall
+		for (int i = 0; i < row; i++) {
+			GameObject wall = (GameObject)Instantiate (Resources.Load ("Wall"));
+			SetPosition (wall, i, -1, 0);
+		}
+		for (int i = 0; i < row; i++) {
+			GameObject wall = (GameObject)Instantiate (Resources.Load ("Wall"));
+			SetPosition (wall, i, col, 0);
+		}
+		
 	}
 
 	// Set the position for the gameobject
