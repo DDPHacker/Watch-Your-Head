@@ -6,10 +6,10 @@ public class MapGenerate : MonoBehaviour {
 	private int col = 20;
 	private int row = 15;
 	private int rownum;
-	private int[,] blocked = new int[row, col]{0};
+	//private int[,] blocked = new int[row, col]{0};
 
 	// Use this for initialization
-	void Start () {
+	/*void Start () {
 		rownum = Random.Range (2, 5);
 		int gap = row / rownum / 3;
 		int blocklength;
@@ -30,5 +30,5 @@ public class MapGenerate : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
-	}
+	}*/
 }
