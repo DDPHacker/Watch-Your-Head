@@ -10,9 +10,10 @@ public class MapGenerate : MonoBehaviour {
 	private int[,] block = new int[15, 20];
 	private int blocknum = 0;
 
-	// Use this for initialization
-	void Start () {
-
+	public void GenerateMap(int seed) {
+		// Set seed
+		Random.seed = seed;
+			
 		// Initialize the block array
 		for (int i = 0; i < row; i++)
 			for (int j = 0; j < col; j++)
@@ -99,12 +100,6 @@ public class MapGenerate : MonoBehaviour {
 					}
 				}
 			}
-
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
 	}
 
 	// Set the position for the gameobject

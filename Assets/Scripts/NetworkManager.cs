@@ -56,6 +56,14 @@ public class NetworkManager : MonoBehaviour {
 
 	void OnJoinedRoom() {
 		Debug.Log("On Joined Room!!!");
+		if (PhotonNetwork.player.isMasterClient) {
+			int seed = Random.Range(0, 1000);
+			GameObject.FindGameObjectWithTag("Map Generator").GetComponent<MapGenerate>().GenerateMap(seed);
+			PhotonNetwork.room.SetCustomProperties(new ExitGames.Client.Photon.Hashtable() { { "seed", seed } });
+		} else {
+			int seed = (int)(PhotonNetwork.room.customProperties["seed"]);
+			GameObject.FindGameObjectWithTag("Map Generator").GetComponent<MapGenerate>().GenerateMap(seed);
+		}
 		PhotonNetwork.player.name = usernameInput.text;
 		StopCoroutine(UpdateStateText());
 		UIWindow.SetActive(false);

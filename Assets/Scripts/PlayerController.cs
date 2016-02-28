@@ -44,18 +44,18 @@ public class PlayerController : Photon.MonoBehaviour {
 		if (!isMine) {
 			GetComponent<Rigidbody2D>().isKinematic = true;
 		} else {
-			photonView.RPC("setName", PhotonTargets.All, PhotonNetwork.player.name.ToString());
+			photonView.RPC("setName", PhotonTargets.All, PhotonNetwork.playerName);
 		}
 	}
 
 	[PunRPC]
 	public void setName (string name) {
-		transform.FindChild("NameTag").GetComponent<Text>().text = name;
+		GetComponentInChildren<Text>().text = name;
 	}
 
 	// Update is called once per frame
 	void Update() {
-		if (HP>0 && isMine) {
+		if (HP > 0 && isMine) {
 			float moveHorizontal = Input.GetAxisRaw("Horizontal");
 
 			// Move
@@ -168,16 +168,6 @@ public class PlayerController : Photon.MonoBehaviour {
 		transform.rotation = Quaternion.Slerp(transform.rotation, correctRotation, Time.deltaTime * 10);
 	}
 
-	void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
-		if (stream.isWriting) {
-			stream.SendNext(transform.position);
-			stream.SendNext(transform.rotation);
-		} else {
-			correctPosition = (Vector3)stream.ReceiveNext();
-			correctRotation = (Quaternion)stream.ReceiveNext();
-		}
-	}
-
 	void OnCollisionEnter2D(Collision2D coll){
 		if (isMine && coll.gameObject.tag == "Player") {
 			Vector2 colpos = coll.transform.position;
@@ -185,16 +175,35 @@ public class PlayerController : Photon.MonoBehaviour {
 			dir.Normalize ();
 			rb2D.AddForce (new Vector2(dir.x * bounceForce, dir.y * bounceForce));
 			if (-dir.y > HP_dir) {
-				Damaged();
+				photonView.RPC("Damaged", PhotonTargets.All);
 				if (HP == 0) {
-					transform.localScale = new Vector3 (transform.localScale.x * 2f, transform.localScale.y * 0.5f, 1);
+					photonView.RPC("Die", PhotonTargets.All);
 				}
 			}
 		}
 	}
 
+	[PunRPC]
 	public void Damaged() {
 		HP--;
-		print("Oh!!");
+	}
+
+	[PunRPC]
+	public void Die() {
+		transform.localScale = new Vector3 (transform.localScale.x * 2f, transform.localScale.y * 0.5f, 1);
+	}
+
+	void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
+		if (stream.isWriting) {
+			stream.SendNext(transform.position);
+			stream.SendNext(transform.rotation);
+			stream.SendNext(transform.localScale);
+			stream.SendNext(PhotonNetwork.playerName);
+		} else {
+			correctPosition = (Vector3)stream.ReceiveNext();
+			correctRotation = (Quaternion)stream.ReceiveNext();
+			transform.localScale = (Vector3)stream.ReceiveNext();
+			GetComponentInChildren<Text>().text = (string)stream.ReceiveNext();
+		}
 	}
 }
