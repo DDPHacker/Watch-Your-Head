@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class PlayerController : Photon.MonoBehaviour {
 
@@ -42,7 +43,14 @@ public class PlayerController : Photon.MonoBehaviour {
 		isMine = photonView.isMine;
 		if (!isMine) {
 			GetComponent<Rigidbody2D>().isKinematic = true;
+		} else {
+			photonView.RPC("setName", PhotonTargets.All, PhotonNetwork.player.name.ToString());
 		}
+	}
+
+	[PunRPC]
+	public void setName (string name) {
+		transform.FindChild("NameTag").GetComponent<Text>().text = name;
 	}
 
 	// Update is called once per frame
