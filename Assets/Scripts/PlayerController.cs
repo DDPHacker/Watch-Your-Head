@@ -28,9 +28,12 @@ public class PlayerController : Photon.MonoBehaviour {
 	private BoxCollider2D bc2D;
 	private bool isMine;
 	private bool falling = false;
+	private GameObject HPBar;
 
 	// Use this for initialization
 	void Start() {
+		HPBar = GameObject.FindGameObjectWithTag ("HPBar");
+		HPBar.GetComponent<HPController> ().show (maxHP);
 		HP = maxHP;
 		rb2D = GetComponent<Rigidbody2D>();
 		bc2D = GetComponent<BoxCollider2D> ();
@@ -176,6 +179,7 @@ public class PlayerController : Photon.MonoBehaviour {
 			rb2D.AddForce (new Vector2(dir.x * bounceForce, dir.y * bounceForce));
 			if (-dir.y > HP_dir) {
 				photonView.RPC("Damaged", PhotonTargets.All);
+				HPBar.GetComponent<HPController>().show(HP);
 				if (HP == 0) {
 					photonView.RPC("Die", PhotonTargets.All);
 				}
