@@ -14,7 +14,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	public float acceleration;
 	public float HP_dir;
 	[HideInInspector]public int team;
-	[HideInInspector]public int HP;
+	public int HP;
 
 	private Rigidbody2D rb2D;
 	private float distToGround;
@@ -171,6 +171,9 @@ public class PlayerController : Photon.MonoBehaviour {
 		transform.rotation = Quaternion.Slerp(transform.rotation, correctRotation, Time.deltaTime * 10);
 	}
 
+	public void GoDie(){
+		photonView.RPC("Die", PhotonTargets.All);
+	}
 	void OnCollisionEnter2D(Collision2D coll){
 		if (isMine && coll.gameObject.tag == "Player") {
 			Vector2 colpos = coll.transform.position;
@@ -181,7 +184,7 @@ public class PlayerController : Photon.MonoBehaviour {
 				photonView.RPC("Damaged", PhotonTargets.All);
 				HPBar.GetComponent<HPController>().show(HP);
 				if (HP == 0) {
-					photonView.RPC("Die", PhotonTargets.All);
+					GoDie ();
 				}
 			}
 		}
