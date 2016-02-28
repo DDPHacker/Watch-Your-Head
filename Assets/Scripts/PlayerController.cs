@@ -121,7 +121,7 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	IEnumerator JumpFucked() {
 		jumpSpeed = 0.0f;
-		yield return new WaitForSeconds(8.00f);
+		yield return new WaitForSeconds(2.00f);
 		jumpSpeed = originalJumpSpeed;
 	}
 
