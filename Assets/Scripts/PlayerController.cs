@@ -189,7 +189,9 @@ public class PlayerController : Photon.MonoBehaviour {
 		transform.localScale = new Vector3 (transform.localScale.x * 0.5f, transform.localScale.y * 2f, 1);
 		rb2D.velocity = new Vector2(0.0f, 5.0f);
 		HP = 5;
+
 		StartCoroutine(Invin ());
+		HPBar.GetComponent<HPController>().show(HP);
 	}
 
 	void OnCollisionEnter2D(Collision2D coll){
