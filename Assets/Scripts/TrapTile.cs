@@ -5,6 +5,7 @@ public class TrapTile : GameTile {
 	private bool flag;
 	public Sprite TrapOff;
 	private SpriteRenderer spriteRenderer; 
+	public GameObject hp;
 	// Use this for initialization
 	void Start () {
 		type = 5;
@@ -13,8 +14,12 @@ public class TrapTile : GameTile {
 		spriteRenderer = GetComponent<SpriteRenderer>();
 	}
 	void OnTriggerEnter2D(Collider2D other){
-		if (flag) {
+		if (flag && other.gameObject.tag == "Player") {
 			other.gameObject.GetComponent<PlayerController> ().Damaged();
+			hp = GameObject.FindGameObjectWithTag ("HPBar");
+			hp.GetComponent<HPController> ().show (other.gameObject.GetComponent<PlayerController>().HP);
+			if (other.gameObject.GetComponent<PlayerController> ().HP == 0)
+				other.gameObject.GetComponent<PlayerController> ().GoDie ();
 			flag = false;
 			spriteRenderer.sprite = TrapOff;
 		}
