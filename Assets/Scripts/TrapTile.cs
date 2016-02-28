@@ -11,7 +11,7 @@ public class TrapTile : GameTile {
 	}
 	void OnTriggerEnter2D(Collider2D other){
 		if (flag) {
-			other.gameObject.GetComponent<PlayerController> ().HP--;
+			other.gameObject.GetComponent<PlayerController> ().Damaged();
 			flag = false;
 		}
 	}

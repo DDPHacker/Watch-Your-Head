@@ -14,16 +14,17 @@ public class PlayerController : Photon.MonoBehaviour {
 	[HideInInspector]public int HP;
 
 	private Rigidbody2D rb2D;
-	private float distToGround;
+	private BoxCollider2D bc2D;
 	private Vector2 normsize;
 	private Vector2 fallsize;
-	private float maxPositionY;
-	private float minPositionY;
-	private BoxCollider2D bc2D;
-	private bool isMine;
-	private bool falling = false;
 	private Vector3 correctPosition;
 	private Quaternion correctRotation;
+	private float originalJumpSpeed;
+	private float distToGround;
+	private float maxPositionY;
+	private float minPositionY;
+	private bool isMine;
+	private bool falling = false;
 
 	// Use this for initialization
 	void Start() {
@@ -33,8 +34,9 @@ public class PlayerController : Photon.MonoBehaviour {
 		distToGround = bc2D.bounds.extents.y * 1.5f;
 		minPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 0)).y;
 		maxPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 1)).y;
-		normsize = bc2D.size;
 		fallsize = new Vector2 (normsize.x * 1.3f, normsize.y * 1.3f);
+		normsize = bc2D.size;
+		originalJumpSpeed = jumpSpeed;
 		isMine = photonView.isMine;
 		if (!isMine) {
 			GetComponent<Rigidbody2D>().isKinematic = true;
@@ -68,7 +70,7 @@ public class PlayerController : Photon.MonoBehaviour {
 
 			// Fall
 			if (Input.GetKey(KeyCode.DownArrow)) {
-				if (isGrounded()) {
+				if (isGrounded() ) {
 					Fall();
 				}
 			}
@@ -90,6 +92,27 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	void Jump() {
 		rb2D.velocity = new Vector2(rb2D.velocity.x, jumpSpeed);
+	}
+
+	public void SetCantJump() {
+		if (jumpSpeed != 0) {
+			StartCoroutine(JumpFucked());
+		} else {
+			StopCoroutine(JumpFucked());
+			StartCoroutine(JumpFucked());
+		}
+	}
+
+	IEnumerator JumpFucked() {
+		jumpSpeed = 0.0f;
+		yield return new WaitForSeconds(8.00f);
+		jumpSpeed = originalJumpSpeed;
+	}
+
+	public void SetBounce() {
+		if (rb2D.velocity.y < 0) {
+			rb2D.velocity = new Vector2(rb2D.velocity.x, -rb2D.velocity.y + 3.0f);
+		}
 	}
 
 	void Fall() {
@@ -146,5 +169,10 @@ public class PlayerController : Photon.MonoBehaviour {
 		if (coll.gameObject.tag == "Player") {
 
 		}
+	}
+
+	public void Damaged() {
+		HP--;
+		print("Oh!!");
 	}
 }

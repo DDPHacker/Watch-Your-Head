@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class IceTile : GameTile {
+public class StuckTile : GameTile {
 
 	// Use this for initialization
 	void Start () {
-		type = 1;
-		isFall = true;
+		isFall = false;
+		type = 3;
 	}
 	void OnTriggerEnter2D(Collider2D other){
-		other.gameObject.GetComponent<PlayerController> ().acceleration = 10.0f;
+		other.gameObject.GetComponent<PlayerController> ().SetCantJump();
+
 	}
 }

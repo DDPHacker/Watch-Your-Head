@@ -5,10 +5,11 @@ public class SpringTile : GameTile {
 
 	// Use this for initialization
 	void Start () {
-		isFall = false;
-		type = 3;
+		type = 1;
+		isFall = true;
 	}
+
 	void OnTriggerEnter2D(Collider2D other){
-		other.gameObject.GetComponent<PlayerController> ().jumpSpeed *= 2;
+		other.gameObject.GetComponent<PlayerController> ().SetBounce();
 	}
 }

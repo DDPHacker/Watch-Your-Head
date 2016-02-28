@@ -81,11 +81,11 @@ public class MapGenerate : MonoBehaviour {
 						SetPosition (stonetile, i, j);
 						break;
 					case 3: // IceTile
-						GameObject icetile = (GameObject)Instantiate (Resources.Load ("IceTile"));
+						GameObject icetile = (GameObject)Instantiate (Resources.Load ("SpringTile"));
 						SetPosition (icetile, i, j);
 						break;
 					case 4: // SpringTile
-						GameObject springtile = (GameObject)Instantiate (Resources.Load ("SpringTile"));
+						GameObject springtile = (GameObject)Instantiate (Resources.Load ("StuckTile"));
 						SetPosition (springtile, i, j);
 						break;
 					case 5: // TrapTile
