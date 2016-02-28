@@ -52,9 +52,9 @@ public class PlayerController : Photon.MonoBehaviour {
 			}
 
 			if (falling){
-				if (!bc2D.IsTouchingLayers (LayerMask.GetMask("Ground"))) {
-					print("??");
-					bc2D.usedByEffector = false;
+				if ( !Physics2D.IsTouchingLayers(GetComponent<BoxCollider2D>(),LayerMask.GetMask("Ground"))) {
+					print ("@@");
+					bc2D.isTrigger = false;
 					bc2D.size = normsize;
 					falling = false;
 				}
@@ -86,7 +86,7 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	void Fall() {
 		print("!!");
-		bc2D.usedByEffector = true;
+		bc2D.isTrigger = true;
 		bc2D.size = fallsize;
 		falling = true;
 	}
