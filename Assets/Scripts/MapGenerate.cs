@@ -9,6 +9,8 @@ public class MapGenerate : MonoBehaviour {
 	private int col = 20;
 	private int[,] block = new int[15, 20];
 	private int blocknum = 0;
+	public Vector2 pos1;
+	public Vector2 pos2;
 
 	public void GenerateMap(int seed) {
 		// Set seed
@@ -57,11 +59,13 @@ public class MapGenerate : MonoBehaviour {
 					if (cnt == p1) {
 						block [i, j] = 6;
 						SetPosition (PortalTile1, i, j, 1);
+						pos1 = new Vector2 ((j - (col - col % 2) / 2) * tilesize, (i - (row - row % 2) / 2) * tilesize);
 						//blocknum--;
 					}
 					if (cnt == p2) {
 						block [i, j] = 6;
 						SetPosition (PortalTile2, i, j, 1);
+						pos2 = new Vector2 ((j - (col - col % 2) / 2) * tilesize, (i - (row - row % 2) / 2) * tilesize);
 						//blocknum--;
 					}
 				}
