@@ -102,7 +102,6 @@ public class PlayerController : Photon.MonoBehaviour {
 			} else {
 				// Fall
 				if (Input.GetKey (KeyCode.DownArrow)) {
-					
 					if (isGrounded ()) {
 						Fall ();
 					}
