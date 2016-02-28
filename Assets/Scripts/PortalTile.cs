@@ -10,8 +10,16 @@ public class PortalTile : GameTile {
 	}
 
 	void OnTriggerEnter2D(Collider2D other){
-		if (other.gameObject.tag == "Player")
-			other.gameObject.transform.position = new Vector3 (x + 0.64f, y + 0.64f, 0.0f);
+		if (other.gameObject.tag == "Player") {
+			int sign = Random.Range(0, 2);
+			if (sign == 0) {
+				other.gameObject.transform.position = new Vector3 (x + 0.64f, y + 0.64f, 0.0f);
+				other.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(3.0f, 4.0f);
+			} else {
+				other.gameObject.transform.position = new Vector3 (x - 0.64f, y + 0.64f, 0.0f);
+				other.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(-3.0f, 4.0f);
+			}
+		}
 	}
 
 	public void getPosition(GameObject other)
