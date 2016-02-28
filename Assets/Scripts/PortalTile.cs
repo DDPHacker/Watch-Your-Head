@@ -13,9 +13,9 @@ public class PortalTile : GameTile {
 		x = x1;
 		y = y1;
 	}
-	override void stepOn(GameObject Player)
+	public override void stepOn(GameObject Player)
 	{
-		Player.transform.position = ();
+		//Player.transform.position = ();
 	}
 	// Update is called once per frame
 	void Update () {

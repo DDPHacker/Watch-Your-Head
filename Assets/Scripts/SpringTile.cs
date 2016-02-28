@@ -8,7 +8,7 @@ public class SpringTile : GameTile {
 		isFall = false;
 		type = 3;
 	}
-	override void stepOn(GameObject Player)
+	public override void stepOn(GameObject Player)
 	{
 		// speed up
 	}

@@ -4,7 +4,7 @@ using System.Collections;
 public class GameTile : MonoBehaviour {
 	protected int type;
 	public bool isFall;
-	virtual void stepOn(GameObject Player)
+	public virtual void stepOn(GameObject Player)
 	{
 
 	}
