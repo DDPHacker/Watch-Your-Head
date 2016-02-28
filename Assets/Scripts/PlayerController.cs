@@ -173,7 +173,16 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	public void GoDie(){
 		photonView.RPC("Die", PhotonTargets.All);
+		StartCoroutine(BackToLife());
 	}
+
+	IEnumerator BackToLife() {
+		yield return new WaitForSeconds(10.0f);
+		transform.localScale = new Vector3 (transform.localScale.x * 0.5f, transform.localScale.y * 2f, 1);
+		rb2D.velocity = new Vector2(0.0f, 5.0f);
+		HP = 5;
+	}
+
 	void OnCollisionEnter2D(Collision2D coll){
 		if (isMine && coll.gameObject.tag == "Player") {
 			Vector2 colpos = coll.transform.position;
@@ -181,12 +190,16 @@ public class PlayerController : Photon.MonoBehaviour {
 			dir.Normalize ();
 			rb2D.AddForce (new Vector2(dir.x * bounceForce, dir.y * bounceForce));
 			if (-dir.y > HP_dir && HP>0) {
-				photonView.RPC("Damaged", PhotonTargets.All);
-				HPBar.GetComponent<HPController>().show(HP);
-				if (HP == 0) {
-					GoDie ();
-				}
+				ReceiveDamage();
 			}
+		}
+	}
+
+	public void ReceiveDamage() {
+		photonView.RPC("Damaged", PhotonTargets.All);
+		HPBar.GetComponent<HPController>().show(HP);
+		if (HP == 0) {
+			GoDie ();
 		}
 	}
 
