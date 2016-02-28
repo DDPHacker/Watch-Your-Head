@@ -7,22 +7,24 @@ public class PlayerController : Photon.MonoBehaviour {
 	public float maxHorizontalSpeed;
 	public float maxVerticalSpeed;	
 	public float maxAngularSpeed;
-	public float angularforce;
+	public float angularForce;
+	public float bounceForce;
 	public float jumpSpeed;
 	public float acceleration;
+	public float HP_dir;
 	[HideInInspector]public int team;
 	[HideInInspector]public int HP;
 
 	private Rigidbody2D rb2D;
-	private BoxCollider2D bc2D;
+	private float distToGround;
 	private Vector2 normsize;
 	private Vector2 fallsize;
 	private Vector3 correctPosition;
 	private Quaternion correctRotation;
 	private float originalJumpSpeed;
-	private float distToGround;
 	private float maxPositionY;
 	private float minPositionY;
+	private BoxCollider2D bc2D;
 	private bool isMine;
 	private bool falling = false;
 
@@ -45,7 +47,7 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
-		if (isMine) {
+		if (HP>0 && isMine) {
 			float moveHorizontal = Input.GetAxisRaw("Horizontal");
 
 			// Move
@@ -60,18 +62,20 @@ public class PlayerController : Photon.MonoBehaviour {
 				}
 			}
 
-			if (falling){
-				if ( !Physics2D.IsTouchingLayers(GetComponent<BoxCollider2D>(),LayerMask.GetMask("Ground"))) {
+
+			if (!Physics2D.IsTouchingLayers (GetComponent<BoxCollider2D> (), LayerMask.GetMask ("Ground"))) {
+				if (falling) {
 					bc2D.isTrigger = false;
 					bc2D.size = normsize;
 					falling = false;
 				}
-			}
+			} else {
 
-			// Fall
-			if (Input.GetKey(KeyCode.DownArrow)) {
-				if (isGrounded() ) {
-					Fall();
+				// Fall
+				if (Input.GetKey (KeyCode.DownArrow)) {
+					if (isGrounded ()) {
+						Fall ();
+					}
 				}
 			}
 		}
@@ -87,7 +91,7 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	void Move(float moveHorizontal) {
 		rb2D.AddForce(new Vector2(moveHorizontal * acceleration, 0));	
-		rb2D.AddTorque(-moveHorizontal*angularforce);
+		rb2D.AddTorque(-moveHorizontal*angularForce);
 	}
 
 	void Jump() {
@@ -166,8 +170,17 @@ public class PlayerController : Photon.MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D coll){
-		if (coll.gameObject.tag == "Player") {
-
+		if (isMine && coll.gameObject.tag == "Player") {
+			Vector2 colpos = coll.transform.position;
+			Vector2 dir = new Vector2 (transform.position.x - colpos.x, transform.position.y -colpos.y);
+			dir.Normalize ();
+			rb2D.AddForce (new Vector2(dir.x * bounceForce, dir.y * bounceForce));
+			if (-dir.y > HP_dir) {
+				HP--;
+				if (HP == 0) {
+					transform.localScale = new Vector3 (transform.localScale.x * 2f, transform.localScale.y * 0.5f, 1);
+				}
+			}
 		}
 	}
 
