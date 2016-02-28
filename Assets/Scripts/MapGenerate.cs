@@ -38,7 +38,7 @@ public class MapGenerate : MonoBehaviour {
 					break;
 			}
 
-			r += Random.Range (3, 5);
+			r += Random.Range (3, 4);
 			if (r >= row - 1)
 				break;
 		}
@@ -75,7 +75,7 @@ public class MapGenerate : MonoBehaviour {
 		for (int i = 0; i < row; i++)
 			for (int j = 0; j < col; j++) {
 				if (block [i, j] == 1) {
-					type = Random.Range (2, 14);
+					type = Random.Range (2, 20);
 					switch (type) {
 					case 2: // StoneTile
 						GameObject stonetile = (GameObject)Instantiate (Resources.Load ("StoneTile"));
