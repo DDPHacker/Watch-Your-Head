@@ -12,12 +12,19 @@ public class PlayerController : MonoBehaviour {
 
 	private Rigidbody2D rb2D;
 	private float distToGround;
+	private bool falling = false;
+	private Vector2 normsize;
+	private Vector2 fallsize;
+	private BoxCollider2D bc2D;
 
 	// Use this for initialization
 	void Start() {
 		HP = maxHP;
 		rb2D = GetComponent<Rigidbody2D>();
-		distToGround = GetComponent<Collider2D>().bounds.extents.y + 0.1f;
+		bc2D = GetComponent<BoxCollider2D> ();
+		distToGround = bc2D.bounds.extents.y + 0.1f;
+		normsize = bc2D.size;
+		fallsize = new Vector2 (normsize.x + 0.1f, normsize.y + 0.1f);
 	}
 		
 	// Update is called once per frame
@@ -31,8 +38,16 @@ public class PlayerController : MonoBehaviour {
 
 		// Jump
 		if (Input.GetKeyDown(KeyCode.UpArrow)) {
-			if (isGrounded()) {
+			if (!falling && isGrounded()) {
 				Jump();
+			}
+		}
+
+		if (falling){
+			if (!bc2D.IsTouchingLayers (LayerMask.GetMask("Ground"))) {
+				bc2D.isTrigger = false;
+				bc2D.size = normsize;
+				falling = false;
 			}
 		}
 
@@ -42,6 +57,7 @@ public class PlayerController : MonoBehaviour {
 				Fall();
 			}
 		}
+
 	}
 
 	void FixedUpdate() {
@@ -57,7 +73,9 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Fall() {
-	
+		bc2D.isTrigger = true;
+		bc2D.size = fallsize;
+		falling = true;
 	}
 
 	void ClampHorizontalSpeed() {
@@ -69,5 +87,11 @@ public class PlayerController : MonoBehaviour {
 	bool isGrounded(){
 		Vector2 coordinate2D =new Vector2(transform.position.x,transform.position.y-distToGround);
 		return Physics2D.Raycast(coordinate2D, -Vector2.up, 0.1f);
+	}
+
+	void OnCollisionEnter2D(Collision2D coll){
+		if (coll.gameObject.tag == "Player") {
+			
+		}
 	}
 }
