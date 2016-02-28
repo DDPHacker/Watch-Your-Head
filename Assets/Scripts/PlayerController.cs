@@ -177,7 +177,7 @@ public class PlayerController : Photon.MonoBehaviour {
 			Vector2 dir = new Vector2 (transform.position.x - colpos.x, transform.position.y -colpos.y);
 			dir.Normalize ();
 			rb2D.AddForce (new Vector2(dir.x * bounceForce, dir.y * bounceForce));
-			if (-dir.y > HP_dir) {
+			if (-dir.y > HP_dir && HP>0) {
 				photonView.RPC("Damaged", PhotonTargets.All);
 				HPBar.GetComponent<HPController>().show(HP);
 				if (HP == 0) {
