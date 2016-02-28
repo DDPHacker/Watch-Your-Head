@@ -37,7 +37,7 @@ public class MapGenerate : MonoBehaviour {
 			}
 
 			r += Random.Range (2, 5);
-			if (r >= col - 1)
+			if (r >= row - 1)
 				break;
 		}
 
@@ -46,8 +46,6 @@ public class MapGenerate : MonoBehaviour {
 		int p2 = Random.Range (blocknum / 2 + 1, blocknum);
 		GameObject PortalTile1 = (GameObject)Instantiate (Resources.Load ("PortalTile"));
 		GameObject PortalTile2 = (GameObject)Instantiate (Resources.Load ("PortalTile"));
-		GameObject Portal1 = (GameObject)Instantiate (Resources.Load ("Portal"));
-		GameObject Portal2 = (GameObject)Instantiate (Resources.Load ("Portal"));
 
 		int cnt = 0;
 		for (int i = 0; i < row; i++) {
@@ -57,21 +55,20 @@ public class MapGenerate : MonoBehaviour {
 					if (cnt == p1) {
 						block [i, j] = 6;
 						SetPosition (PortalTile1, i, j);
-						SetPosition (Portal1, i + 1, j);
 						blocknum--;
 					}
 					if (cnt == p2) {
 						block [i, j] = 6;
 						SetPosition (PortalTile2, i, j);
-						SetPosition (Portal2, i + 1, j);
 						blocknum--;
 					}
 				}
 			}
 		}
-
-		Portal1.GetComponent<Portal>().getPosition (Portal2);
-		Portal2.GetComponent<Portal>().getPosition (Portal1);
+		PortalTile1.GetComponent<PortalTile>().getPosition (PortalTile2);
+		PortalTile2.GetComponent<PortalTile>().getPosition (PortalTile1);
+//		Portal1.GetComponent<Portal>().getPosition (Portal2);
+//		Portal2.GetComponent<Portal>().getPosition (Portal1);
 
 		// Set the other kind of tiles
 		int type;
@@ -81,26 +78,20 @@ public class MapGenerate : MonoBehaviour {
 					type = Random.Range (0, 7);
 					switch (type) {
 					case 2: // StoneTile
-						GameObject stonetile = (GameObject)Instantiate (Resources.Load ("TrapTile"));
+						GameObject stonetile = (GameObject)Instantiate (Resources.Load ("StoneTile"));
 						SetPosition (stonetile, i, j);
 						break;
 					case 3: // IceTile
 						GameObject icetile = (GameObject)Instantiate (Resources.Load ("IceTile"));
 						SetPosition (icetile, i, j);
-						GameObject ice = (GameObject)Instantiate (Resources.Load ("Ice"));
-						SetPosition (ice, i + 1, j);
 						break;
 					case 4: // SpringTile
 						GameObject springtile = (GameObject)Instantiate (Resources.Load ("SpringTile"));
 						SetPosition (springtile, i, j);
-						GameObject spring = (GameObject)Instantiate (Resources.Load ("Spring"));
-						SetPosition (spring, i + 1, j);
 						break;
 					case 5: // TrapTile
 						GameObject traptile = (GameObject)Instantiate (Resources.Load ("TrapTile"));
 						SetPosition (traptile, i, j);
-						GameObject trap = (GameObject)Instantiate (Resources.Load ("Trap"));
-						SetPosition (trap, i + 1, j);
 						break;
 					default: // WoodTile
 						GameObject woodtile = (GameObject)Instantiate (Resources.Load ("WoodTile"));

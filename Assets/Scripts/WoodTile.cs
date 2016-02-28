@@ -9,7 +9,4 @@ public class WoodTile : GameTile {
 		isFall = true;
 	}
 	// Update is called once per frame
-	void Update () {
-	
-	}
 }
