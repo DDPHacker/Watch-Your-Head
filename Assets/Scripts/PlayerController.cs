@@ -44,28 +44,29 @@ public class PlayerController : Photon.MonoBehaviour {
 				Move(moveHorizontal);
 			}
 
-		// Jump
-		if (Input.GetKeyDown(KeyCode.UpArrow)) {
-			if (!falling && isGrounded()) {
-				Jump();
+			// Jump
+			if (Input.GetKeyDown(KeyCode.UpArrow)) {
+				if (!falling && isGrounded()) {
+					Jump();
+				}
+			}
+
+			if (falling){
+				if (!bc2D.IsTouchingLayers (LayerMask.GetMask("Ground"))) {
+					print("??");
+					bc2D.usedByEffector = false;
+					bc2D.size = normsize;
+					falling = false;
+				}
+			}
+
+			// Fall
+			if (Input.GetKeyDown(KeyCode.DownArrow)) {
+				if (isGrounded()) {
+					Fall();
+				}
 			}
 		}
-
-		if (falling){
-			if (!bc2D.IsTouchingLayers (LayerMask.GetMask("Ground"))) {
-				bc2D.isTrigger = false;
-				bc2D.size = normsize;
-				falling = false;
-			}
-		}
-
-		// Fall
-		if (Input.GetKeyDown(KeyCode.DownArrow)) {
-			if (isGrounded()) {
-				Fall();
-			}
-		}
-
 	}
 
 	void FixedUpdate() {
@@ -84,7 +85,8 @@ public class PlayerController : Photon.MonoBehaviour {
 	}
 
 	void Fall() {
-		bc2D.isTrigger = true;
+		print("!!");
+		bc2D.usedByEffector = true;
 		bc2D.size = fallsize;
 		falling = true;
 	}
@@ -112,7 +114,6 @@ public class PlayerController : Photon.MonoBehaviour {
 		} else {
 			correctPosition = (Vector3)stream.ReceiveNext();
 			correctRotation = (Quaternion)stream.ReceiveNext();
-			Debug.Log(correctPosition);
 		}
 	}
 
