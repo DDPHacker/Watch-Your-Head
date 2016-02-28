@@ -3,11 +3,11 @@ using System.Collections;
 
 public class MapGenerate : MonoBehaviour {
 
-	public float tilesize = 0.32;
+	public float tilesize = 0.32f;
 
 	private int row = 15;
 	private int col = 20;
-	private int[,] block = new int[row, col];
+	private int[,] block = new int[15, 20];
 	private int blocknum = 0;
 
 	// Use this for initialization
@@ -22,9 +22,9 @@ public class MapGenerate : MonoBehaviour {
 		int r, c, l;
 		r = Random.Range (0, 2);
 
-		while (1) {
+		while (true) {
 			c = Random.Range (0, 8);
-			while (1) {
+			while (true) {
 				l = Random.Range (2, 10);
 				if (c + l >= col - 1)
 					l = col - 1 - c;
@@ -69,8 +69,9 @@ public class MapGenerate : MonoBehaviour {
 				}
 			}
 		}
-		Portal1.getPosition (Portal2);
-		Portal2.getPosition (Portal1);
+
+		Portal1.GetComponent<Portal>().getPosition (Portal2);
+		Portal2.GetComponent<Portal>().getPosition (Portal1);
 
 		// Set the other kind of tiles
 		int type;
@@ -80,30 +81,30 @@ public class MapGenerate : MonoBehaviour {
 					type = Random.Range (0, 7);
 					switch (type) {
 					case 2: // StoneTile
-						GameObject StoneTile = (GameObject)Instantiate (Resources.Load ("TrapTile"));
-						SetPosition (StoneTile, i, j);
+						GameObject stonetile = (GameObject)Instantiate (Resources.Load ("TrapTile"));
+						SetPosition (stonetile, i, j);
 						break;
 					case 3: // IceTile
-						GameObject IceTile = (GameObject)Instantiate (Resources.Load ("IceTile"));
-						SetPosition (IceTile, i, j);
-						GameObject Ice = (GameObject)Instantiate (Resources.Load ("Ice"));
-						SetPosition (Ice, i + 1, j);
+						GameObject icetile = (GameObject)Instantiate (Resources.Load ("IceTile"));
+						SetPosition (icetile, i, j);
+						GameObject ice = (GameObject)Instantiate (Resources.Load ("Ice"));
+						SetPosition (ice, i + 1, j);
 						break;
 					case 4: // SpringTile
-						GameObject SpringTile = (GameObject)Instantiate (Resources.Load ("SpringTile"));
-						SetPosition (SpringTile, i, j);
-						GameObject Trap = (GameObject)Instantiate (Resources.Load ("Spring"));
-						SetPosition (Spring, i + 1, j);
+						GameObject springtile = (GameObject)Instantiate (Resources.Load ("SpringTile"));
+						SetPosition (springtile, i, j);
+						GameObject spring = (GameObject)Instantiate (Resources.Load ("Spring"));
+						SetPosition (spring, i + 1, j);
 						break;
 					case 5: // TrapTile
-						GameObject TrapTile = (GameObject)Instantiate (Resources.Load ("TrapTile"));
-						SetPosition (TrapTile, i, j);
-						GameObject Trap = (GameObject)Instantiate (Resources.Load ("Trap"));
-						SetPosition (Trap, i + 1, j);
+						GameObject traptile = (GameObject)Instantiate (Resources.Load ("TrapTile"));
+						SetPosition (traptile, i, j);
+						GameObject trap = (GameObject)Instantiate (Resources.Load ("Trap"));
+						SetPosition (trap, i + 1, j);
 						break;
 					default: // WoodTile
-						GameObject WoodTile = (GameObject)Instantiate (Resources.Load ("WoodTile"));
-						SetPosition (WoodTile, i, j);
+						GameObject woodtile = (GameObject)Instantiate (Resources.Load ("WoodTile"));
+						SetPosition (woodtile, i, j);
 						break;
 					}
 				}
@@ -118,7 +119,7 @@ public class MapGenerate : MonoBehaviour {
 
 	// Set the position for the gameobject
 	private void SetPosition (GameObject Tile, int i, int j) {
-		int x, y;
+		float x, y;
 
 		if (col % 2 == 1)
 			x = (j - (col - 1) / 2) * tilesize;
