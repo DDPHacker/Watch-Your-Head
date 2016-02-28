@@ -36,8 +36,8 @@ public class PlayerController : Photon.MonoBehaviour {
 		distToGround = bc2D.bounds.extents.y * 1.5f;
 		minPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 0)).y;
 		maxPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 1)).y;
-		fallsize = new Vector2 (normsize.x * 1.3f, normsize.y * 1.3f);
 		normsize = bc2D.size;
+		fallsize = new Vector2 (normsize.x * 1.3f, normsize.y * 1.3f);
 		originalJumpSpeed = jumpSpeed;
 		isMine = photonView.isMine;
 		if (!isMine) {
@@ -73,6 +73,7 @@ public class PlayerController : Photon.MonoBehaviour {
 
 				// Fall
 				if (Input.GetKey (KeyCode.DownArrow)) {
+					
 					if (isGrounded ()) {
 						Fall ();
 					}
@@ -176,7 +177,7 @@ public class PlayerController : Photon.MonoBehaviour {
 			dir.Normalize ();
 			rb2D.AddForce (new Vector2(dir.x * bounceForce, dir.y * bounceForce));
 			if (-dir.y > HP_dir) {
-				HP--;
+				Damaged();
 				if (HP == 0) {
 					transform.localScale = new Vector3 (transform.localScale.x * 2f, transform.localScale.y * 0.5f, 1);
 				}
