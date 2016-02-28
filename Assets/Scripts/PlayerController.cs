@@ -33,7 +33,6 @@ public class PlayerController : Photon.MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		HPBar = GameObject.FindGameObjectWithTag ("HPBar");
-		HPBar.GetComponent<HPController> ().show (maxHP);
 		HP = maxHP;
 		rb2D = GetComponent<Rigidbody2D>();
 		bc2D = GetComponent<BoxCollider2D> ();
@@ -48,6 +47,7 @@ public class PlayerController : Photon.MonoBehaviour {
 			GetComponent<Rigidbody2D>().isKinematic = true;
 		} else {
 			photonView.RPC("setName", PhotonTargets.All, PhotonNetwork.playerName);
+			HPBar.GetComponent<HPController> ().show (maxHP);
 		}
 	}
 
@@ -196,10 +196,12 @@ public class PlayerController : Photon.MonoBehaviour {
 	}
 
 	public void ReceiveDamage() {
-		photonView.RPC("Damaged", PhotonTargets.All);
-		HPBar.GetComponent<HPController>().show(HP);
-		if (HP == 0) {
-			GoDie ();
+		if (isMine) {
+			photonView.RPC("Damaged", PhotonTargets.All);
+			HPBar.GetComponent<HPController>().show(HP);
+			if (HP == 0) {
+				GoDie ();
+			}
 		}
 	}
 
