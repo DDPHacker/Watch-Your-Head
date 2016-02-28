@@ -13,7 +13,7 @@ public class MapGenerate : MonoBehaviour {
 	public void GenerateMap(int seed) {
 		// Set seed
 		Random.seed = seed;
-			
+
 		// Initialize the block array
 		for (int i = 0; i < row; i++)
 			for (int j = 0; j < col; j++)
@@ -56,12 +56,12 @@ public class MapGenerate : MonoBehaviour {
 					cnt ++;
 					if (cnt == p1) {
 						block [i, j] = 6;
-						SetPosition (PortalTile1, i, j);
+						SetPosition (PortalTile1, i, j, 1);
 						//blocknum--;
 					}
 					if (cnt == p2) {
 						block [i, j] = 6;
-						SetPosition (PortalTile2, i, j);
+						SetPosition (PortalTile2, i, j, 1);
 						//blocknum--;
 					}
 				}
@@ -75,27 +75,27 @@ public class MapGenerate : MonoBehaviour {
 		for (int i = 0; i < row; i++)
 			for (int j = 0; j < col; j++) {
 				if (block [i, j] == 1) {
-					type = Random.Range (0, 14);
+					type = Random.Range (2, 14);
 					switch (type) {
 					case 2: // StoneTile
 						GameObject stonetile = (GameObject)Instantiate (Resources.Load ("StoneTile"));
-						SetPosition (stonetile, i, j);
+						SetPosition (stonetile, i, j, type);
 						break;
 					case 3: // IceTile
 						GameObject icetile = (GameObject)Instantiate (Resources.Load ("SpringTile"));
-						SetPosition (icetile, i, j);
+						SetPosition (icetile, i, j, type);
 						break;
 					case 4: // SpringTile
 						GameObject springtile = (GameObject)Instantiate (Resources.Load ("StuckTile"));
-						SetPosition (springtile, i, j);
+						SetPosition (springtile, i, j, type);
 						break;
 					case 5: // TrapTile
-						GameObject traptile = (GameObject)Instantiate (Resources.Load ("TrapTile"));
-						SetPosition (traptile, i, j);
+						GameObject traptile = (GameObject)Instantiate (Resources.Load ("TrapOnTile"));
+						SetPosition (traptile, i, j, type);
 						break;
 					default: // WoodTile
 						GameObject woodtile = (GameObject)Instantiate (Resources.Load ("WoodTile"));
-						SetPosition (woodtile, i, j);
+						SetPosition (woodtile, i, j, type);
 						break;
 					}
 				}
@@ -103,7 +103,7 @@ public class MapGenerate : MonoBehaviour {
 	}
 
 	// Set the position for the gameobject
-	private void SetPosition (GameObject Tile, int i, int j) {
+	private void SetPosition (GameObject Tile, int i, int j, int type) {
 		float x, y;
 
 		if (col % 2 == 1)
@@ -116,6 +116,8 @@ public class MapGenerate : MonoBehaviour {
 		else
 			y = (i - row / 2) * tilesize;
 
+		if (type == 5 || type == 1)
+			y = y + 0.32f;
 		Tile.transform.position = new Vector2 (x, y);
 	}
 }
