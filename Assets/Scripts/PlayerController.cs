@@ -36,6 +36,8 @@ public class PlayerController : Photon.MonoBehaviour {
 	private GameObject HPBar;
 	private bool invincible;
 	private bool teleFlag = false;
+	private Vector2 portalPos1;
+	private Vector2 portalPos2;
 
 	// Use this for initialization
 	void Start() {
@@ -47,6 +49,8 @@ public class PlayerController : Photon.MonoBehaviour {
 		distToGround = bc2D.bounds.extents.y * 1.5f;
 		minPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 0)).y;
 		maxPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 1)).y;
+		portalPos1 = GameObject.FindGameObjectWithTag("Map Generator").GetComponent<MapGenerate>().pos1;
+		portalPos2 = GameObject.FindGameObjectWithTag("Map Generator").GetComponent<MapGenerate>().pos2;
 		normsize = bc2D.size;
 		fallsize = new Vector2 (normsize.x * 1.3f, normsize.y * 1.3f);
 		originalJumpSpeed = jumpSpeed;
@@ -181,10 +185,20 @@ public class PlayerController : Photon.MonoBehaviour {
 	void UpdatePlayerPosition() {
 		if (Mathf.Abs(transform.position.y - correctPosition.y) > Mathf.Abs(maxPositionY - minPositionY) - 3.0) {
 			transform.position = correctPosition;
+		} else if (isNear(transform.position, portalPos1) && isNear(correctPosition, portalPos2) 
+			|| isNear(transform.position, portalPos2) && isNear(correctPosition, portalPos1)) {
+			transform.position = correctPosition;
 		} else {
 			transform.position = Vector3.Lerp(transform.position, correctPosition, Time.deltaTime * 10);
 		}
 		transform.rotation = Quaternion.Slerp(transform.rotation, correctRotation, Time.deltaTime * 10);
+	}
+
+	bool isNear(Vector3 a, Vector2 b) {
+		float error = 5.0f;
+		if ((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) > error)
+			return false;
+		return true;
 	}
 
 	public void GoDie(){
