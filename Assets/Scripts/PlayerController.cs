@@ -53,7 +53,6 @@ public class PlayerController : Photon.MonoBehaviour {
 
 			if (falling){
 				if ( !Physics2D.IsTouchingLayers(GetComponent<BoxCollider2D>(),LayerMask.GetMask("Ground"))) {
-					print ("@@");
 					bc2D.isTrigger = false;
 					bc2D.size = normsize;
 					falling = false;
@@ -85,7 +84,6 @@ public class PlayerController : Photon.MonoBehaviour {
 	}
 
 	void Fall() {
-		print("!!");
 		bc2D.isTrigger = true;
 		bc2D.size = fallsize;
 		falling = true;
@@ -98,8 +96,9 @@ public class PlayerController : Photon.MonoBehaviour {
 	}
 
 	bool isGrounded(){
-		Vector2 coordinate2D =new Vector2(transform.position.x,transform.position.y-distToGround);
-		return Physics2D.Raycast(coordinate2D, -Vector2.up, 0.1f);
+		RaycastHit2D[] results = new RaycastHit2D[3];
+		Vector2 coordinate2D =new Vector2(transform.position.x,transform.position.y);
+		return Physics2D.RaycastNonAlloc(coordinate2D, -Vector2.up, results, distToGround+0.1f)>2;
 	}
 
 	void UpdatePlayerPosition() {
