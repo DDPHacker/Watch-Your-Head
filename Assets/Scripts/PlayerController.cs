@@ -35,6 +35,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	private bool falling = false;
 	private GameObject HPBar;
 	private bool invincible;
+	private bool teleFlag = false;
 
 	// Use this for initialization
 	void Start() {
@@ -239,6 +240,21 @@ public class PlayerController : Photon.MonoBehaviour {
 	IEnumerator emojiBack() {
 		yield return new WaitForSeconds(1.0f);
 		emojiState = 0;
+	}
+
+	public void Teleported(float x, float y, float direction) {
+		if (isMine) {
+			if (teleFlag) return;
+			teleFlag = true;
+			transform.position = new Vector3 (x, y, 0.0f);
+			rb2D.velocity = new Vector2(direction * 3.0f, 5.0f);
+			StartCoroutine(teleAgain());
+		}
+	}
+
+	IEnumerator teleAgain() {
+		yield return new WaitForSeconds(0.5f);
+		teleFlag = false;
 	}
 
 	[PunRPC]
