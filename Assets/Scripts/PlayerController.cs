@@ -4,7 +4,8 @@ using System.Collections;
 public class PlayerController : Photon.MonoBehaviour {
 
 	public int maxHP;
-	public float maxSpeed;
+	public float maxHorizontalSpeed;
+	public float maxVerticalSpeed;	
 	public float maxAngularSpeed;
 	public float angularforce;
 	public float jumpSpeed;
@@ -39,7 +40,7 @@ public class PlayerController : Photon.MonoBehaviour {
 			GetComponent<Rigidbody2D>().isKinematic = true;
 		}
 	}
-		
+
 	// Update is called once per frame
 	void Update() {
 		if (isMine) {
@@ -67,7 +68,6 @@ public class PlayerController : Photon.MonoBehaviour {
 
 			// Fall
 			if (Input.GetKey(KeyCode.DownArrow)) {
-				
 				if (isGrounded()) {
 					Fall();
 				}
@@ -76,7 +76,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		ClampHorizontalSpeed();
+		ClampSpeed();
 		ClampVerticalPosition();
 		if (!isMine) {
 			UpdatePlayerPosition();
@@ -98,11 +98,12 @@ public class PlayerController : Photon.MonoBehaviour {
 		falling = true;
 	}
 
-	void ClampHorizontalSpeed() {
+	void ClampSpeed() {
 		float speedHorizontal = rb2D.velocity.x;
-		speedHorizontal = Mathf.Clamp(speedHorizontal, -maxSpeed, maxSpeed);
-		rb2D.velocity = new Vector2(speedHorizontal, rb2D.velocity.y);
-
+		float speedVertical = rb2D.velocity.y;
+		speedHorizontal = Mathf.Clamp(speedHorizontal, -maxHorizontalSpeed, maxHorizontalSpeed);
+		speedVertical = Mathf.Clamp(speedVertical, -maxVerticalSpeed, maxVerticalSpeed);
+		rb2D.velocity = new Vector2(speedHorizontal, speedVertical);
 		rb2D.angularVelocity = Mathf.Clamp(rb2D.angularVelocity, -maxAngularSpeed, maxAngularSpeed);
 	}
 
@@ -143,7 +144,7 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D coll){
 		if (coll.gameObject.tag == "Player") {
-			
+
 		}
 	}
 }
