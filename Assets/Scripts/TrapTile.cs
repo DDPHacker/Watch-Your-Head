@@ -15,11 +15,7 @@ public class TrapTile : GameTile {
 	}
 	void OnTriggerEnter2D(Collider2D other){
 		if (flag && other.gameObject.tag == "Player") {
-			other.gameObject.GetComponent<PlayerController> ().Damaged();
-			hp = GameObject.FindGameObjectWithTag ("HPBar");
-			hp.GetComponent<HPController> ().show (other.gameObject.GetComponent<PlayerController>().HP);
-			if (other.gameObject.GetComponent<PlayerController> ().HP == 0)
-				other.gameObject.GetComponent<PlayerController> ().GoDie ();
+			other.gameObject.GetComponent<PlayerController> ().ReceiveDamage ();
 			flag = false;
 			spriteRenderer.sprite = TrapOff;
 		}
