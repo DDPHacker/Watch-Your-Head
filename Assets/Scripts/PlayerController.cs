@@ -15,8 +15,13 @@ public class PlayerController : Photon.MonoBehaviour {
 	public float HP_dir;
 	[HideInInspector]public int team;
 	public int HP;
+	public Sprite normalEmojo;
+	public Sprite hurtEmoji1;
+	public Sprite hurtEmoji2;
 
+	private int emojiState = 0;
 	private Rigidbody2D rb2D;
+	private SpriteRenderer spr2D;
 	private float distToGround;
 	private Vector2 normsize;
 	private Vector2 fallsize;
@@ -36,6 +41,7 @@ public class PlayerController : Photon.MonoBehaviour {
 		HP = maxHP;
 		rb2D = GetComponent<Rigidbody2D>();
 		bc2D = GetComponent<BoxCollider2D> ();
+		spr2D = GetComponent<SpriteRenderer>();
 		distToGround = bc2D.bounds.extents.y * 1.5f;
 		minPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 0)).y;
 		maxPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 1)).y;
@@ -81,7 +87,6 @@ public class PlayerController : Photon.MonoBehaviour {
 					falling = false;
 				}
 			} else {
-
 				// Fall
 				if (Input.GetKey (KeyCode.DownArrow)) {
 					
@@ -90,6 +95,14 @@ public class PlayerController : Photon.MonoBehaviour {
 					}
 				}
 			}
+		}
+
+		if (emojiState == 0) {
+			spr2D.sprite = normalEmojo;
+		} else if (emojiState == 1) {
+			spr2D.sprite = hurtEmoji1;
+		} else if (emojiState == 2) {
+			spr2D.sprite = hurtEmoji2;
 		}
 	}
 
@@ -197,12 +210,23 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	public void ReceiveDamage() {
 		if (isMine) {
+			int tmp = Random.Range(0, 2);
+			if (tmp == 0)
+				emojiState = 1;
+			else
+				emojiState = 2;
 			photonView.RPC("Damaged", PhotonTargets.All);
 			HPBar.GetComponent<HPController>().show(HP);
 			if (HP == 0) {
 				GoDie ();
 			}
+			StartCoroutine(emojiBack());
 		}
+	}
+
+	IEnumerator emojiBack() {
+		yield return new WaitForSeconds(1.0f);
+		emojiState = 0;
 	}
 
 	[PunRPC]
@@ -221,11 +245,13 @@ public class PlayerController : Photon.MonoBehaviour {
 			stream.SendNext(transform.rotation);
 			stream.SendNext(transform.localScale);
 			stream.SendNext(PhotonNetwork.playerName);
+			stream.SendNext(emojiState);
 		} else {
 			correctPosition = (Vector3)stream.ReceiveNext();
 			correctRotation = (Quaternion)stream.ReceiveNext();
 			transform.localScale = (Vector3)stream.ReceiveNext();
 			GetComponentInChildren<Text>().text = (string)stream.ReceiveNext();
+			emojiState = (int)stream.ReceiveNext();
 		}
 	}
 }
