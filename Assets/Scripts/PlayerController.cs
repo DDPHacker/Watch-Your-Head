@@ -14,6 +14,8 @@ public class PlayerController : Photon.MonoBehaviour {
 	private float distToGround;
 	private Vector2 normsize;
 	private Vector2 fallsize;
+	private float maxPositionY;
+	private float minPositionY;
 	private BoxCollider2D bc2D;
 	private bool isMine;
 	private bool falling = false;
@@ -25,6 +27,8 @@ public class PlayerController : Photon.MonoBehaviour {
 		HP = maxHP;
 		rb2D = GetComponent<Rigidbody2D>();
 		bc2D = GetComponent<BoxCollider2D> ();
+		minPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 0)).y;
+		maxPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 1)).y;
 		distToGround = bc2D.bounds.extents.y + 0.1f;
 		normsize = bc2D.size;
 		fallsize = new Vector2 (normsize.x + 0.1f, normsize.y + 0.1f);
@@ -70,6 +74,7 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	void FixedUpdate() {
 		ClampHorizontalSpeed();
+		ClampVerticalPosition();
 		if (!isMine) {
 			UpdatePlayerPosition();
 		}
@@ -95,14 +100,28 @@ public class PlayerController : Photon.MonoBehaviour {
 		rb2D.velocity = new Vector2(speedHorizontal, rb2D.velocity.y);
 	}
 
+	void ClampVerticalPosition() {
+		float verticalPosition = transform.position.y;
+		if (verticalPosition > maxPositionY) {
+			verticalPosition = minPositionY;
+		} else if (verticalPosition < minPositionY) {
+			verticalPosition = maxPositionY;
+		}
+		transform.position = new Vector3(transform.position.x, verticalPosition, transform.position.z);
+	}
+
 	bool isGrounded(){
 		RaycastHit2D[] results = new RaycastHit2D[3];
 		Vector2 coordinate2D =new Vector2(transform.position.x,transform.position.y);
-		return Physics2D.RaycastNonAlloc(coordinate2D, -Vector2.up, results, distToGround+0.1f)>2;
+		return Physics2D.RaycastNonAlloc(coordinate2D, -Vector2.up, results, distToGround + 0.1f) > 2;
 	}
 
 	void UpdatePlayerPosition() {
-		transform.position = Vector3.Lerp(transform.position, correctPosition, Time.deltaTime * 10);
+		if (Mathf.Abs(transform.position.y - correctPosition.y) > Mathf.Abs(maxPositionY - minPositionY) - 3.0) {
+			transform.position = correctPosition;
+		} else {
+			transform.position = Vector3.Lerp(transform.position, correctPosition, Time.deltaTime * 10);
+		}
 		transform.rotation = Quaternion.Slerp(transform.rotation, correctRotation, Time.deltaTime * 10);
 	}
 
