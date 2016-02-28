@@ -8,7 +8,7 @@ public class TrapTile : GameTile {
 		type = 5;
 		isFall = false;
 	}
-	override void stepOn(GameObject Player)
+	public override void stepOn(GameObject Player)
 	{
 		if (isFall == false) {
 			//damage
