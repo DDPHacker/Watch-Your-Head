@@ -3,7 +3,7 @@ using System.Collections;
 
 public class MapGenerate : MonoBehaviour {
 
-	public float tilesize = 0.32f;
+	public float tilesize = 0.64f;
 
 	private int row = 15;
 	private int col = 20;
