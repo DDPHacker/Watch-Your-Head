@@ -34,6 +34,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	private bool isMine;
 	private bool falling = false;
 	private GameObject HPBar;
+	private bool invincible;
 
 	// Use this for initialization
 	void Start() {
@@ -52,6 +53,7 @@ public class PlayerController : Photon.MonoBehaviour {
 		if (!isMine) {
 			GetComponent<Rigidbody2D>().isKinematic = true;
 		} else {
+			StartCoroutine(Invin ());
 			photonView.RPC("setName", PhotonTargets.All, PhotonNetwork.playerName);
 			HPBar.GetComponent<HPController> ().show (maxHP);
 		}
@@ -189,11 +191,20 @@ public class PlayerController : Photon.MonoBehaviour {
 		StartCoroutine(BackToLife());
 	}
 
+	IEnumerator Invin() {
+		invincible = true;
+		yield return new WaitForSeconds(2.0f);
+		invincible = false;
+	}
+
 	IEnumerator BackToLife() {
 		yield return new WaitForSeconds(10.0f);
 		transform.localScale = new Vector3 (transform.localScale.x * 0.5f, transform.localScale.y * 2f, 1);
 		rb2D.velocity = new Vector2(0.0f, 5.0f);
 		HP = 5;
+
+		StartCoroutine(Invin ());
+		HPBar.GetComponent<HPController>().show(HP);
 	}
 
 	void OnCollisionEnter2D(Collision2D coll){
@@ -202,7 +213,8 @@ public class PlayerController : Photon.MonoBehaviour {
 			Vector2 dir = new Vector2 (transform.position.x - colpos.x, transform.position.y -colpos.y);
 			dir.Normalize ();
 			rb2D.AddForce (new Vector2(dir.x * bounceForce, dir.y * bounceForce));
-			if (-dir.y > HP_dir && HP>0) {
+			if (!invincible && -dir.y > HP_dir && HP>0) {
+				StartCoroutine(Invin ());
 				ReceiveDamage();
 			}
 		}
