@@ -62,6 +62,7 @@ public class NetworkManager : MonoBehaviour {
 		StopCoroutine(UpdateStateText());
 		loginWindow.SetActive(false);
 		UIWindow.transform.FindChild ("Background").gameObject.SetActive (false);
+		loadingText.gameObject.SetActive (false);
 		HPBar.SetActive (true);
 		StartCoroutine(SpawnPlayer());
 	}
