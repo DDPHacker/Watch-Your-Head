@@ -8,9 +8,4 @@ public class StoneTile : GameTile {
 		type = 4;
 		isFall = false;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }

@@ -16,6 +16,8 @@ public class PlayerController : Photon.MonoBehaviour {
 	private float distToGround;
 	private Vector2 normsize;
 	private Vector2 fallsize;
+	private float maxPositionY;
+	private float minPositionY;
 	private BoxCollider2D bc2D;
 	private bool isMine;
 	private bool falling = false;
@@ -28,6 +30,8 @@ public class PlayerController : Photon.MonoBehaviour {
 		rb2D = GetComponent<Rigidbody2D>();
 		bc2D = GetComponent<BoxCollider2D> ();
 		distToGround = bc2D.bounds.extents.y * 1.5f;
+		minPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 0)).y;
+		maxPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 1)).y;
 		normsize = bc2D.size;
 		fallsize = new Vector2 (normsize.x * 1.3f, normsize.y * 1.3f);
 		isMine = photonView.isMine;
@@ -73,6 +77,7 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	void FixedUpdate() {
 		ClampHorizontalSpeed();
+		ClampVerticalPosition();
 		if (!isMine) {
 			UpdatePlayerPosition();
 		}
@@ -101,6 +106,16 @@ public class PlayerController : Photon.MonoBehaviour {
 		rb2D.angularVelocity = Mathf.Clamp(rb2D.angularVelocity, -maxAngularSpeed, maxAngularSpeed);
 	}
 
+	void ClampVerticalPosition() {
+		float verticalPosition = transform.position.y;
+		if (verticalPosition > maxPositionY) {
+			verticalPosition = minPositionY;
+		} else if (verticalPosition < minPositionY) {
+			verticalPosition = maxPositionY;
+		}
+		transform.position = new Vector3(transform.position.x, verticalPosition, transform.position.z);
+	}
+
 	bool isGrounded(){
 		RaycastHit2D[] results = new RaycastHit2D[3];
 		Vector2 coordinate2D =new Vector2(transform.position.x,transform.position.y);
@@ -108,7 +123,11 @@ public class PlayerController : Photon.MonoBehaviour {
 	}
 
 	void UpdatePlayerPosition() {
-		transform.position = Vector3.Lerp(transform.position, correctPosition, Time.deltaTime * 10);
+		if (Mathf.Abs(transform.position.y - correctPosition.y) > Mathf.Abs(maxPositionY - minPositionY) - 3.0) {
+			transform.position = correctPosition;
+		} else {
+			transform.position = Vector3.Lerp(transform.position, correctPosition, Time.deltaTime * 10);
+		}
 		transform.rotation = Quaternion.Slerp(transform.rotation, correctRotation, Time.deltaTime * 10);
 	}
 

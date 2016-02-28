@@ -8,12 +8,7 @@ public class IceTile : GameTile {
 		type = 1;
 		isFall = true;
 	}
-//	override void stepOn(GameObject Player)
-//	{
-//
-//	}
-	// Update is called once per frame
-	void Update () {
-	
+	void OnTriggerEnter2D(Collider2D other){
+		other.gameObject.GetComponent<PlayerController> ().acceleration = 10.0f;
 	}
 }
