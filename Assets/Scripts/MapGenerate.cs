@@ -33,7 +33,7 @@ public class MapGenerate : MonoBehaviour {
 					block [r, c + i] = 1;
 				c += l;
 				blocknum += l;
-				c += Random.Range (4, 9);
+				c += Random.Range (3, 6);
 				if (c >= col - 1)
 					break;
 			}
@@ -82,12 +82,12 @@ public class MapGenerate : MonoBehaviour {
 						SetPosition (stonetile, i, j, type);
 						break;
 					case 3: // IceTile
-						GameObject icetile = (GameObject)Instantiate (Resources.Load ("SpringTile"));
-						SetPosition (icetile, i, j, type);
+						GameObject springtile = (GameObject)Instantiate (Resources.Load ("SpringTile"));
+						SetPosition (springtile, i, j, type);
 						break;
 					case 4: // SpringTile
-						GameObject springtile = (GameObject)Instantiate (Resources.Load ("StuckTile"));
-						SetPosition (springtile, i, j, type);
+						GameObject stucktile = (GameObject)Instantiate (Resources.Load ("StuckTile"));
+						SetPosition (stucktile, i, j, type);
 						break;
 					case 5: // TrapTile
 						GameObject traptile = (GameObject)Instantiate (Resources.Load ("TrapOnTile"));
