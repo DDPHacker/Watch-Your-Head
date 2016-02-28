@@ -9,6 +9,7 @@ public class NetworkManager : MonoBehaviour {
 
 	private GameObject UIWindow;
 	private GameObject loginWindow;
+	private GameObject HPBar;
 	private InputField usernameInput;
 	private InputField roomNameInput;
 	private InputField roomListInput;
@@ -20,6 +21,7 @@ public class NetworkManager : MonoBehaviour {
 		UIWindow = GameObject.FindGameObjectWithTag("UICanvas");
 		loginWindow = UIWindow.transform.FindChild("Login").gameObject;
 		loadingText = UIWindow.transform.FindChild("Loading Text").GetComponent<Text>();
+		HPBar = UIWindow.transform.FindChild ("HPBar").gameObject;
 		usernameInput = loginWindow.transform.FindChild("Username Input").GetComponent<InputField>();
 		roomNameInput = loginWindow.transform.FindChild("Roomname Input").GetComponent<InputField>();
 		roomListInput = loginWindow.transform.FindChild("Roomname List").GetComponent<InputField>();
@@ -58,7 +60,9 @@ public class NetworkManager : MonoBehaviour {
 		Debug.Log("On Joined Room!!!");
 		PhotonNetwork.player.name = usernameInput.text;
 		StopCoroutine(UpdateStateText());
-		UIWindow.SetActive(false);
+		loginWindow.SetActive(false);
+		UIWindow.transform.FindChild ("Background").gameObject.SetActive (false);
+		HPBar.SetActive (true);
 		StartCoroutine(SpawnPlayer());
 	}
 
