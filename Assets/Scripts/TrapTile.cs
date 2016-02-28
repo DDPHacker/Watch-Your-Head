@@ -8,13 +8,6 @@ public class TrapTile : GameTile {
 		type = 5;
 		isFall = false;
 	}
-	public override void stepOn(GameObject Player)
-	{
-		if (isFall == false) {
-			//damage
-			isFall = true;
-		}
-	}
 	// Update is called once per frame
 	void Update () {
 	

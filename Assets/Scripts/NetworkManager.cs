@@ -3,6 +3,11 @@ using System.Collections;
 
 public class NetworkManager : MonoBehaviour {
 
+	[SerializeField] public GameObject playerPrefab;
+	[SerializeField] public Transform[] spawnPoints;
+
+	private GameObject player;
+
 	// Use this for initialization
 	void Start () {
 		PhotonNetwork.logLevel = PhotonLogLevel.Full;
@@ -10,17 +15,25 @@ public class NetworkManager : MonoBehaviour {
 	}
 
 	void OnJoinedLobby() {
-		Debug.Log("On joined lobby");
+		Debug.Log("On joined lobby!!");
+		JoinRoom();
 	}
 
 	void JoinRoom() {
+		Debug.Log("Join Room!!");
 		RoomOptions roomOption = new RoomOptions() {isVisible = true, isOpen = true, maxPlayers = 4};
 		PhotonNetwork.JoinOrCreateRoom("Test", roomOption, TypedLobby.Default);
-		Debug.Log("Join Room");
 	}
 
-	// Update is called once per frame
-	void Update () {
-	
+	void OnJoinedRoom() {
+		Debug.Log("On Joined Room!!!");
+		StartCoroutine(SpawnPlayer());
+	}
+
+	IEnumerator SpawnPlayer() {
+		yield return new WaitForSeconds(0.0f);
+		//messageWindow.SetActive(true);
+		int spawnIndex = Random.Range(0, spawnPoints.Length);
+		player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPoints[spawnIndex].position, spawnPoints[spawnIndex].rotation, 0);
 	}
 }
