@@ -15,9 +15,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	public float HP_dir;
 	[HideInInspector]public int team;
 	public int HP;
-	public Sprite normalEmojo;
-	public Sprite hurtEmoji1;
-	public Sprite hurtEmoji2;
+	public Sprite[] emoji;
 
 	private int emojiState = 0;
 	private Rigidbody2D rb2D;
@@ -38,6 +36,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	private bool teleFlag = false;
 	private Vector2 portalPos1;
 	private Vector2 portalPos2;
+	private int emojiIndex = 0;
 
 	// Use this for initialization
 	void Start() {
@@ -59,9 +58,16 @@ public class PlayerController : Photon.MonoBehaviour {
 			GetComponent<Rigidbody2D>().isKinematic = true;
 		} else {
 			StartCoroutine(Invin ());
+			GetMyEmoji();
 			photonView.RPC("setName", PhotonTargets.All, PhotonNetwork.playerName);
 			HPBar.GetComponent<HPController> ().show (maxHP);
 		}
+	}
+
+	void GetMyEmoji () {
+		System.Random rand = new System.Random();
+		int tmp = rand.Next(emoji.Length / 3);
+		emojiIndex = tmp * 3;
 	}
 
 	[PunRPC]
@@ -104,13 +110,7 @@ public class PlayerController : Photon.MonoBehaviour {
 			}
 		}
 
-		if (emojiState == 0) {
-			spr2D.sprite = normalEmojo;
-		} else if (emojiState == 1) {
-			spr2D.sprite = hurtEmoji1;
-		} else if (emojiState == 2) {
-			spr2D.sprite = hurtEmoji2;
-		}
+		spr2D.sprite = emoji[emojiIndex + emojiState];
 	}
 
 	void FixedUpdate() {
@@ -287,7 +287,7 @@ public class PlayerController : Photon.MonoBehaviour {
 			stream.SendNext(transform.rotation);
 			stream.SendNext(transform.localScale);
 			stream.SendNext(PhotonNetwork.playerName);
-			stream.SendNext(emojiState);
+			stream.SendNext(emojiIndex + emojiState);
 		} else {
 			correctPosition = (Vector3)stream.ReceiveNext();
 			correctRotation = (Quaternion)stream.ReceiveNext();
