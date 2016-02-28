@@ -8,12 +8,7 @@ public class SpringTile : GameTile {
 		isFall = false;
 		type = 3;
 	}
-	public override void stepOn(GameObject Player)
-	{
-		// speed up
-	}
-	// Update is called once per frame
-	void Update () {
-	
+	void OnTriggerEnter2D(Collider2D other){
+		other.gameObject.GetComponent<PlayerController> ().jumpSpeed *= 2;
 	}
 }
