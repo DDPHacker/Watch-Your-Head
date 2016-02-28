@@ -67,6 +67,7 @@ public class PlayerController : Photon.MonoBehaviour {
 			}
 		}
 	}
+
 	void FixedUpdate() {
 		ClampHorizontalSpeed();
 		if (!isMine) {
