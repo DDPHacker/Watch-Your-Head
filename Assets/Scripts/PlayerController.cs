@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class PlayerController : Photon.MonoBehaviour {
@@ -12,7 +12,11 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	private Rigidbody2D rb2D;
 	private float distToGround;
+	private Vector2 normsize;
+	private Vector2 fallsize;
+	private BoxCollider2D bc2D;
 	private bool isMine;
+	private bool falling = false;
 	private Vector3 correctPosition;
 	private Quaternion correctRotation;
 
@@ -20,7 +24,10 @@ public class PlayerController : Photon.MonoBehaviour {
 	void Start() {
 		HP = maxHP;
 		rb2D = GetComponent<Rigidbody2D>();
-		distToGround = GetComponent<Collider2D>().bounds.extents.y + 0.1f;
+		bc2D = GetComponent<BoxCollider2D> ();
+		distToGround = bc2D.bounds.extents.y + 0.1f;
+		normsize = bc2D.size;
+		fallsize = new Vector2 (normsize.x + 0.1f, normsize.y + 0.1f);
 		isMine = photonView.isMine;
 		if (!isMine) {
 			GetComponent<Rigidbody2D>().isKinematic = true;
@@ -37,20 +44,28 @@ public class PlayerController : Photon.MonoBehaviour {
 				Move(moveHorizontal);
 			}
 
-			// Jump
-			if (Input.GetKeyDown(KeyCode.UpArrow)) {
-				if (isGrounded()) {
-					Jump();
-				}
-			}
-
-			// Fall
-			if (Input.GetKeyDown(KeyCode.DownArrow)) {
-				if (isGrounded()) {
-					Fall();
-				}
+		// Jump
+		if (Input.GetKeyDown(KeyCode.UpArrow)) {
+			if (!falling && isGrounded()) {
+				Jump();
 			}
 		}
+
+		if (falling){
+			if (!bc2D.IsTouchingLayers (LayerMask.GetMask("Ground"))) {
+				bc2D.isTrigger = false;
+				bc2D.size = normsize;
+				falling = false;
+			}
+		}
+
+		// Fall
+		if (Input.GetKeyDown(KeyCode.DownArrow)) {
+			if (isGrounded()) {
+				Fall();
+			}
+		}
+
 	}
 
 	void FixedUpdate() {
@@ -69,7 +84,9 @@ public class PlayerController : Photon.MonoBehaviour {
 	}
 
 	void Fall() {
-	
+		bc2D.isTrigger = true;
+		bc2D.size = fallsize;
+		falling = true;
 	}
 
 	void ClampHorizontalSpeed() {
@@ -96,6 +113,12 @@ public class PlayerController : Photon.MonoBehaviour {
 			correctPosition = (Vector3)stream.ReceiveNext();
 			correctRotation = (Quaternion)stream.ReceiveNext();
 			Debug.Log(correctPosition);
+		}
+	}
+
+	void OnCollisionEnter2D(Collision2D coll){
+		if (coll.gameObject.tag == "Player") {
+			
 		}
 	}
 }

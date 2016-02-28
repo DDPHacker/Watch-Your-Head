@@ -1,15 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
-public class Tile : MonoBehaviour {
+public class GameManager : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	
+	public static GameManager instance = null;
+
+	void Awake(){
+		if (instance == null)
+			instance = this;
+		else if (instance != this)
+			Destroy (gameObject);
+		DontDestroyOnLoad (gameObject);
+
+		initGame ();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+
+	void initGame(){
+		SceneManager.LoadScene ("PickTeamScene");
+
+	}
+
+	void Update(){
+		
 	}
 }
