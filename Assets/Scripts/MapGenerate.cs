@@ -11,10 +11,12 @@ public class MapGenerate : MonoBehaviour {
 	private int blocknum = 0;
 	public Vector2 pos1;
 	public Vector2 pos2;
+	public int lastSeed;
 
 	public void GenerateMap(int seed) {
 		// Set seed
 		Random.seed = seed;
+		lastSeed = seed;
 
 		// Initialize the block array
 		for (int i = 0; i < row; i++)
@@ -115,6 +117,12 @@ public class MapGenerate : MonoBehaviour {
 			SetPosition (wall, i, col+2, 0);
 		}
 		
+	}
+
+	void Update() {
+		if (Input.GetKeyDown(KeyCode.R)) {
+			GenerateMap(lastSeed + 1);
+		}
 	}
 
 	// Set the position for the gameobject

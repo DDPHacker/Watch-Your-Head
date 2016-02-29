@@ -110,6 +110,12 @@ public class PlayerController : Photon.MonoBehaviour {
 		}
 
 		spr2D.sprite = emoji[emojiIndex + emojiState];
+
+		if (HP == 0) {
+			GetComponentInChildren<Text>().enabled = false;
+		} else {
+			GetComponentInChildren<Text>().enabled = true;
+		}
 	}
 
 	void FixedUpdate() {
