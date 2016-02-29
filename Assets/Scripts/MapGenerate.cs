@@ -13,10 +13,33 @@ public class MapGenerate : MonoBehaviour {
 	public Vector2 pos2;
 	public int lastSeed;
 
+	void Start() {
+		//Set the Wall
+		for (int i = 0; i < row; i++) {
+			GameObject wall = (GameObject)Instantiate (Resources.Load ("Wall"));
+			SetPosition (wall, i, -3, 0);
+		}
+		for (int i = 0; i < row; i++) {
+			GameObject wall = (GameObject)Instantiate (Resources.Load ("Wall"));
+			SetPosition (wall, i, col+2, 0);
+		}
+	}
+
+	public int GetLastSeed() {
+		return lastSeed;
+	}
+
 	public void GenerateMap(int seed) {
 		// Set seed
 		Random.seed = seed;
 		lastSeed = seed;
+
+		// Remove add existed tile
+		GameObject[] tiles;
+		tiles = GameObject.FindGameObjectsWithTag("Map Tile");
+		foreach (GameObject tile in tiles) {
+			Destroy(tile);
+		}
 
 		// Initialize the block array
 		for (int i = 0; i < row; i++)
@@ -78,7 +101,7 @@ public class MapGenerate : MonoBehaviour {
 
 		// Set the other kind of tiles
 		int type;
-		for (int i = 0; i < row; i++)
+		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < col; j++) {
 				if (block [i, j] == 1) {
 					type = Random.Range (2, 20);
@@ -96,7 +119,7 @@ public class MapGenerate : MonoBehaviour {
 						SetPosition (stucktile, i, j, type);
 						break;
 					case 5: // TrapTile
-						GameObject traptile = (GameObject)Instantiate (Resources.Load ("TrapOnTile"));
+						GameObject traptile = (GameObject)Instantiate (Resources.Load ("TrapTile"));
 						SetPosition (traptile, i, j, type);
 						break;
 					default: // WoodTile
@@ -106,22 +129,6 @@ public class MapGenerate : MonoBehaviour {
 					}
 				}
 			}
-
-		//Set the Wall
-		for (int i = 0; i < row; i++) {
-			GameObject wall = (GameObject)Instantiate (Resources.Load ("Wall"));
-			SetPosition (wall, i, -3, 0);
-		}
-		for (int i = 0; i < row; i++) {
-			GameObject wall = (GameObject)Instantiate (Resources.Load ("Wall"));
-			SetPosition (wall, i, col+2, 0);
-		}
-		
-	}
-
-	void Update() {
-		if (Input.GetKeyDown(KeyCode.R)) {
-			GenerateMap(lastSeed + 1);
 		}
 	}
 

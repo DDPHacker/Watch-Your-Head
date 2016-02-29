@@ -37,6 +37,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	private Vector2 portalPos1;
 	private Vector2 portalPos2;
 	private int emojiIndex = 0;
+	private MapGenerate mg;
 
 	// Use this for initialization
 	void Start() {
@@ -45,11 +46,12 @@ public class PlayerController : Photon.MonoBehaviour {
 		rb2D = GetComponent<Rigidbody2D>();
 		bc2D = GetComponent<BoxCollider2D> ();
 		spr2D = GetComponent<SpriteRenderer>();
+		mg = GameObject.FindGameObjectWithTag("Map Generator").GetComponent<MapGenerate>();
 		distToGround = bc2D.bounds.extents.y * 1.5f;
 		minPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 0)).y;
 		maxPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 1)).y;
-		portalPos1 = GameObject.FindGameObjectWithTag("Map Generator").GetComponent<MapGenerate>().pos1;
-		portalPos2 = GameObject.FindGameObjectWithTag("Map Generator").GetComponent<MapGenerate>().pos2;
+		portalPos1 = mg.pos1;
+		portalPos2 = mg.pos2;
 		normsize = bc2D.size;
 		fallsize = new Vector2 (normsize.x * 1.3f, normsize.y * 1.3f);
 		originalJumpSpeed = jumpSpeed;
@@ -92,7 +94,6 @@ public class PlayerController : Photon.MonoBehaviour {
 				}
 			}
 
-
 			if (!Physics2D.IsTouchingLayers (GetComponent<BoxCollider2D> (), LayerMask.GetMask ("Ground"))) {
 				if (falling) {
 					bc2D.isTrigger = false;
@@ -107,6 +108,11 @@ public class PlayerController : Photon.MonoBehaviour {
 					}
 				}
 			}
+
+			// Refresh Map
+			if (Input.GetKeyDown(KeyCode.R)) {
+				photonView.RPC("RefreshMap", PhotonTargets.All);
+			}
 		}
 
 		spr2D.sprite = emoji[emojiIndex + emojiState];
@@ -116,6 +122,11 @@ public class PlayerController : Photon.MonoBehaviour {
 		} else {
 			GetComponentInChildren<Text>().enabled = true;
 		}
+	}
+
+	[PunRPC]
+	void RefreshMap() {
+		mg.GenerateMap(mg.GetLastSeed() + 1);
 	}
 
 	void FixedUpdate() {
