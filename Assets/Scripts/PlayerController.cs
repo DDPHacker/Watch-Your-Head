@@ -15,9 +15,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	public float HP_dir;
 	[HideInInspector]public int team;
 	public int HP;
-	public Sprite normalEmojo;
-	public Sprite hurtEmoji1;
-	public Sprite hurtEmoji2;
+	public Sprite[] emoji;
 
 	private int emojiState = 0;
 	private Rigidbody2D rb2D;
@@ -38,6 +36,8 @@ public class PlayerController : Photon.MonoBehaviour {
 	private bool teleFlag = false;
 	private Vector2 portalPos1;
 	private Vector2 portalPos2;
+	private int emojiIndex = 0;
+	private MapGenerate mg;
 
 	// Use this for initialization
 	void Start() {
@@ -46,11 +46,12 @@ public class PlayerController : Photon.MonoBehaviour {
 		rb2D = GetComponent<Rigidbody2D>();
 		bc2D = GetComponent<BoxCollider2D> ();
 		spr2D = GetComponent<SpriteRenderer>();
+		mg = GameObject.FindGameObjectWithTag("Map Generator").GetComponent<MapGenerate>();
 		distToGround = bc2D.bounds.extents.y * 1.5f;
 		minPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 0)).y;
 		maxPositionY = Camera.main.ViewportToWorldPoint(new Vector2(0, 1)).y;
-		portalPos1 = GameObject.FindGameObjectWithTag("Map Generator").GetComponent<MapGenerate>().pos1;
-		portalPos2 = GameObject.FindGameObjectWithTag("Map Generator").GetComponent<MapGenerate>().pos2;
+		portalPos1 = mg.pos1;
+		portalPos2 = mg.pos2;
 		normsize = bc2D.size;
 		fallsize = new Vector2 (normsize.x * 1.3f, normsize.y * 1.3f);
 		originalJumpSpeed = jumpSpeed;
@@ -59,9 +60,16 @@ public class PlayerController : Photon.MonoBehaviour {
 			GetComponent<Rigidbody2D>().isKinematic = true;
 		} else {
 			StartCoroutine(Invin ());
+			GetMyEmoji();
 			photonView.RPC("setName", PhotonTargets.All, PhotonNetwork.playerName);
 			HPBar.GetComponent<HPController> ().show (maxHP);
 		}
+	}
+
+	void GetMyEmoji () {
+		System.Random rand = new System.Random();
+		int tmp = rand.Next(emoji.Length / 3);
+		emojiIndex = tmp * 3;
 	}
 
 	[PunRPC]
@@ -86,7 +94,6 @@ public class PlayerController : Photon.MonoBehaviour {
 				}
 			}
 
-
 			if (!Physics2D.IsTouchingLayers (GetComponent<BoxCollider2D> (), LayerMask.GetMask ("Ground"))) {
 				if (falling) {
 					bc2D.isTrigger = false;
@@ -96,21 +103,30 @@ public class PlayerController : Photon.MonoBehaviour {
 			} else {
 				// Fall
 				if (Input.GetKey (KeyCode.DownArrow)) {
-					
 					if (isGrounded ()) {
 						Fall ();
 					}
 				}
 			}
+
+			// Refresh Map
+			if (Input.GetKeyDown(KeyCode.R)) {
+				photonView.RPC("RefreshMap", PhotonTargets.All);
+			}
 		}
 
-		if (emojiState == 0) {
-			spr2D.sprite = normalEmojo;
-		} else if (emojiState == 1) {
-			spr2D.sprite = hurtEmoji1;
-		} else if (emojiState == 2) {
-			spr2D.sprite = hurtEmoji2;
+		spr2D.sprite = emoji[emojiIndex + emojiState];
+
+		if (HP == 0) {
+			GetComponentInChildren<Text>().enabled = false;
+		} else {
+			GetComponentInChildren<Text>().enabled = true;
 		}
+	}
+
+	[PunRPC]
+	void RefreshMap() {
+		mg.GenerateMap(mg.GetLastSeed() + 1);
 	}
 
 	void FixedUpdate() {
@@ -287,7 +303,7 @@ public class PlayerController : Photon.MonoBehaviour {
 			stream.SendNext(transform.rotation);
 			stream.SendNext(transform.localScale);
 			stream.SendNext(PhotonNetwork.playerName);
-			stream.SendNext(emojiState);
+			stream.SendNext(emojiIndex + emojiState);
 		} else {
 			correctPosition = (Vector3)stream.ReceiveNext();
 			correctRotation = (Quaternion)stream.ReceiveNext();

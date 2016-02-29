@@ -77,7 +77,8 @@ public class NetworkManager : MonoBehaviour {
 
 	IEnumerator SpawnPlayer() {
 		yield return new WaitForSeconds(0.0f);
-		int spawnIndex = Random.Range(0, spawnPoints.Length);
+		System.Random rand = new System.Random();
+		int spawnIndex = rand.Next(spawnPoints.Length);
 		player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPoints[spawnIndex].position, spawnPoints[spawnIndex].rotation, 0);
 	}
 }
