@@ -112,16 +112,11 @@ public class PlayerController : Photon.MonoBehaviour {
 			// Refresh Map
 			if (Input.GetKeyDown(KeyCode.R)) {
 				photonView.RPC("RefreshMap", PhotonTargets.All);
+				PhotonNetwork.room.SetCustomProperties(new ExitGames.Client.Photon.Hashtable() { { "seed", mg.GetLastSeed() } });
 			}
 		}
 
 		spr2D.sprite = emoji[emojiIndex + emojiState];
-
-		if (HP == 0) {
-			GetComponentInChildren<Text>().enabled = false;
-		} else {
-			GetComponentInChildren<Text>().enabled = true;
-		}
 	}
 
 	[PunRPC]
@@ -236,6 +231,12 @@ public class PlayerController : Photon.MonoBehaviour {
 
 		StartCoroutine(Invin ());
 		HPBar.GetComponent<HPController>().show(HP);
+		photonView.RPC("NameBack", PhotonTargets.All);
+	}
+
+	[PunRPC]
+	void NameBack() {
+		GetComponentInChildren<Text>().enabled = true;
 	}
 
 	void OnCollisionEnter2D(Collision2D coll){
@@ -295,6 +296,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	[PunRPC]
 	public void Die() {
 		transform.localScale = new Vector3 (transform.localScale.x * 2f, transform.localScale.y * 0.5f, 1);
+		GetComponentInChildren<Text>().enabled = false;
 	}
 
 	void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
