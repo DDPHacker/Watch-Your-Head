@@ -4,14 +4,14 @@ using System.Collections;
 public class MapGenerate : MonoBehaviour {
 
 	public float tilesize = 0.64f;
+	public Vector2 pos1;
+	public Vector2 pos2;
 
 	private int row = 15;
 	private int col = 20;
 	private int[,] block = new int[15, 20];
 	private int blocknum = 0;
-	public Vector2 pos1;
-	public Vector2 pos2;
-	public int lastSeed;
+	private int lastSeed;
 
 	void Start() {
 		//Set the Wall
