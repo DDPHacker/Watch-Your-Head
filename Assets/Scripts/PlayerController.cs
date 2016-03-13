@@ -16,6 +16,8 @@ public class PlayerController : Photon.MonoBehaviour {
 	[HideInInspector]public int team;
 	public int HP;
 	public Sprite[] emoji;
+	public BoxCollider2D bc2D;
+	public BoxCollider2D bc2D_trigger;
 
 	private int emojiState = 0;
 	private Rigidbody2D rb2D;
@@ -28,7 +30,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	private float originalJumpSpeed;
 	private float maxPositionY;
 	private float minPositionY;
-	private BoxCollider2D bc2D;
+
 	private bool isMine;
 	private bool falling = false;
 	private GameObject HPBar;
@@ -44,7 +46,6 @@ public class PlayerController : Photon.MonoBehaviour {
 		HPBar = GameObject.FindGameObjectWithTag ("HPBar");
 		HP = maxHP;
 		rb2D = GetComponent<Rigidbody2D>();
-		bc2D = GetComponent<BoxCollider2D> ();
 		spr2D = GetComponent<SpriteRenderer>();
 		mg = GameObject.FindGameObjectWithTag("Map Generator").GetComponent<MapGenerate>();
 		distToGround = bc2D.bounds.extents.y * 1.5f;
@@ -64,6 +65,7 @@ public class PlayerController : Photon.MonoBehaviour {
 			photonView.RPC("setName", PhotonTargets.All, PhotonNetwork.playerName);
 			HPBar.GetComponent<HPController> ().show (maxHP);
 		}
+
 	}
 
 	void GetMyEmoji () {
@@ -89,39 +91,27 @@ public class PlayerController : Photon.MonoBehaviour {
 
 			// Jump
 			if (Input.GetKeyDown(KeyCode.UpArrow)) {
-				if (!falling && isGrounded()) {
+				if (isStanding()) {
 					Jump();
 				}
 			}
 
-			if (!Physics2D.IsTouchingLayers (GetComponent<BoxCollider2D> (), LayerMask.GetMask ("Ground"))) {
-				if (falling) {
-					bc2D.isTrigger = false;
-					bc2D.size = normsize;
-					falling = false;
-				}
-			} else {
-				// Fall
-				if (Input.GetKey (KeyCode.DownArrow)) {
-					if (isGrounded ()) {
-						Fall ();
-					}
+			// Fall
+			if (Input.GetKey (KeyCode.DownArrow)) {
+				if (!falling && Physics2D.IsTouchingLayers (bc2D, LayerMask.GetMask ("Ground"))) {
+					falling = true;
+					rb2D.WakeUp (); //wake up rigidbody to trigger OnCollisionStay
 				}
 			}
 
 			// Refresh Map
 			if (Input.GetKeyDown(KeyCode.R)) {
 				photonView.RPC("RefreshMap", PhotonTargets.All);
+				PhotonNetwork.room.SetCustomProperties(new ExitGames.Client.Photon.Hashtable() { { "seed", mg.GetLastSeed() } });
 			}
 		}
 
 		spr2D.sprite = emoji[emojiIndex + emojiState];
-
-		if (HP == 0) {
-			GetComponentInChildren<Text>().enabled = false;
-		} else {
-			GetComponentInChildren<Text>().enabled = true;
-		}
 	}
 
 	[PunRPC]
@@ -167,12 +157,6 @@ public class PlayerController : Photon.MonoBehaviour {
 		}
 	}
 
-	void Fall() {
-		bc2D.isTrigger = true;
-		bc2D.size = fallsize;
-		falling = true;
-	}
-
 	void ClampSpeed() {
 		float speedHorizontal = rb2D.velocity.x;
 		float speedVertical = rb2D.velocity.y;
@@ -192,7 +176,7 @@ public class PlayerController : Photon.MonoBehaviour {
 		transform.position = new Vector3(transform.position.x, verticalPosition, transform.position.z);
 	}
 
-	bool isGrounded(){
+	bool isStanding(){
 		RaycastHit2D[] results = new RaycastHit2D[3];
 		Vector2 coordinate2D =new Vector2(transform.position.x,transform.position.y);
 		return Physics2D.RaycastNonAlloc(coordinate2D, -Vector2.up, results, distToGround)>2;
@@ -236,6 +220,12 @@ public class PlayerController : Photon.MonoBehaviour {
 
 		StartCoroutine(Invin ());
 		HPBar.GetComponent<HPController>().show(HP);
+		photonView.RPC("NameBack", PhotonTargets.All);
+	}
+
+	[PunRPC]
+	void NameBack() {
+		GetComponentInChildren<Text>().enabled = true;
 	}
 
 	void OnCollisionEnter2D(Collision2D coll){
@@ -248,6 +238,25 @@ public class PlayerController : Photon.MonoBehaviour {
 				StartCoroutine(Invin ());
 				ReceiveDamage();
 			}
+		}
+
+	}
+
+	void OnCollisionStay2D(Collision2D coll){
+		if (falling && coll.gameObject.layer == LayerMask.NameToLayer("Ground")) {
+			Physics2D.IgnoreCollision (coll.collider, bc2D, true);
+		}
+	}
+
+	void OnTriggerStay2D(Collider2D coll){
+		if (!falling && coll.gameObject.layer == LayerMask.NameToLayer("Ground")) {
+			Physics2D.IgnoreCollision (coll, bc2D, false);
+		}
+	}
+
+	void OnTriggerExit2D(Collider2D coll){
+		if (falling && !Physics2D.IsTouchingLayers (bc2D_trigger, LayerMask.GetMask ("Ground"))) {
+			falling = false;
 		}
 	}
 
@@ -295,6 +304,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	[PunRPC]
 	public void Die() {
 		transform.localScale = new Vector3 (transform.localScale.x * 2f, transform.localScale.y * 0.5f, 1);
+		GetComponentInChildren<Text>().enabled = false;
 	}
 
 	void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
