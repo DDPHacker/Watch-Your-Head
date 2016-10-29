@@ -15,3 +15,7 @@ Watch your head!
 ![img](Images/4.jpg)
 
 ![img](Images/5.jpg)
+
+# A funny bug
+
+![Bug](Images/Bug.gif)
