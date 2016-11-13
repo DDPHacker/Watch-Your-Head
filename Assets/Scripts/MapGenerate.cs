@@ -10,7 +10,7 @@ public class MapGenerate : MonoBehaviour {
 	private int row = 15;
 	private int col = 20;
 	private int[,] block = new int[15, 20];
-	private int blocknum = 0;
+	private int blocknum;
 	private int lastSeed;
 
 	void Start() {
@@ -42,6 +42,7 @@ public class MapGenerate : MonoBehaviour {
 		}
 
 		// Initialize the block array
+		blocknum = 0;
 		for (int i = 0; i < row; i++)
 			for (int j = 0; j < col; j++)
 				block [i, j] = 0;
@@ -71,7 +72,7 @@ public class MapGenerate : MonoBehaviour {
 		}
 
 		// Set the portals (portal = 6)
-		int p1 = Random.Range (1, blocknum/2);
+		int p1 = Random.Range (1, blocknum / 2);
 		int p2 = Random.Range (blocknum / 2 + 1, blocknum);
 		GameObject PortalTile1 = (GameObject)Instantiate (Resources.Load ("PortalTile"));
 		GameObject PortalTile2 = (GameObject)Instantiate (Resources.Load ("PortalTile"));
@@ -85,13 +86,11 @@ public class MapGenerate : MonoBehaviour {
 						block [i, j] = 6;
 						SetPosition (PortalTile1, i, j, 1);
 						pos1 = new Vector2 ((j - (col - col % 2) / 2) * tilesize, (i - (row - row % 2) / 2) * tilesize);
-						//blocknum--;
 					}
 					if (cnt == p2) {
 						block [i, j] = 6;
 						SetPosition (PortalTile2, i, j, 1);
 						pos2 = new Vector2 ((j - (col - col % 2) / 2) * tilesize, (i - (row - row % 2) / 2) * tilesize);
-						//blocknum--;
 					}
 				}
 			}

@@ -3,12 +3,10 @@ using System.Collections;
 
 public class TrapTile : GameTile {
 	private bool flag;
-	public Sprite TrapOff;
-	private SpriteRenderer spriteRenderer; 
 	public GameObject hp;
-
-
+	public Sprite TrapOff;
 	private Sprite TrapOn;
+	private SpriteRenderer spriteRenderer; 
 
 	// Use this for initialization
 	void Start () {
@@ -21,7 +19,7 @@ public class TrapTile : GameTile {
 
 	void OnTriggerEnter2D(Collider2D other){
 		if (flag && other.gameObject.tag == "Player") {
-			other.gameObject.GetComponent<PlayerController> ().ReceiveDamage ();
+			other.gameObject.GetComponent<PlayerController> ().ReceiveDamage();
 			flag = false;
 			spriteRenderer.sprite = TrapOff;
 			StartCoroutine(ResetTrap());
