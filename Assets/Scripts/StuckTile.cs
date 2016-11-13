@@ -8,8 +8,8 @@ public class StuckTile : GameTile {
 		isFall = false;
 		type = 3;
 	}
+
 	void OnTriggerEnter2D(Collider2D other){
 		other.gameObject.GetComponent<PlayerController> ().SetCantJump();
-
 	}
 }

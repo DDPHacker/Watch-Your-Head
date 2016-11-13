@@ -13,7 +13,6 @@ public class PlayerController : Photon.MonoBehaviour {
 	public float jumpSpeed;
 	public float acceleration;
 	public float HP_dir;
-	[HideInInspector]public int team;
 	public int HP;
 	public Sprite[] emoji;
 	public BoxCollider2D bc2D;
@@ -65,7 +64,6 @@ public class PlayerController : Photon.MonoBehaviour {
 			photonView.RPC("setName", PhotonTargets.All, PhotonNetwork.playerName);
 			HPBar.GetComponent<HPController> ().show (maxHP);
 		}
-
 	}
 
 	void GetMyEmoji () {
@@ -129,7 +127,7 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	void Move(float moveHorizontal) {
 		rb2D.AddForce(new Vector2(moveHorizontal * acceleration, 0));	
-		rb2D.AddTorque(-moveHorizontal*angularForce);
+		rb2D.AddTorque(-moveHorizontal * angularForce);
 	}
 
 	void Jump() {
@@ -178,8 +176,8 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	bool isStanding(){
 		RaycastHit2D[] results = new RaycastHit2D[3];
-		Vector2 coordinate2D =new Vector2(transform.position.x,transform.position.y);
-		return Physics2D.RaycastNonAlloc(coordinate2D, -Vector2.up, results, distToGround)>2;
+		Vector2 coordinate2D = new Vector2(transform.position.x,transform.position.y);
+		return Physics2D.RaycastNonAlloc(coordinate2D, -Vector2.up, results, distToGround) > 2;
 	}
 
 	void UpdatePlayerPosition() {
@@ -218,7 +216,7 @@ public class PlayerController : Photon.MonoBehaviour {
 		rb2D.velocity = new Vector2(0.0f, 5.0f);
 		HP = 5;
 
-		StartCoroutine(Invin ());
+		StartCoroutine(Invin());
 		HPBar.GetComponent<HPController>().show(HP);
 		photonView.RPC("NameBack", PhotonTargets.All);
 	}
@@ -270,7 +268,7 @@ public class PlayerController : Photon.MonoBehaviour {
 			photonView.RPC("Damaged", PhotonTargets.All);
 			HPBar.GetComponent<HPController>().show(HP);
 			if (HP == 0) {
-				GoDie ();
+				GoDie();
 			}
 			StartCoroutine(emojiBack());
 		}
