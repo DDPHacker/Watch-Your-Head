@@ -1,10 +1,10 @@
 # Watch-Your-Head!
 
-A multiplayer action game made by Unity3D for nwHack!
+A multiplayer action game made by Unity3D for nwHack 2016!
 
-Watch your head! 
+Watch your head!
 
-# Screen shots
+## Screen shots
 
 ![img](Images/1.jpg)
 
@@ -16,6 +16,6 @@ Watch your head!
 
 ![img](Images/5.jpg)
 
-# A funny bug
+## A funny bug
 
 ![Bug](Images/Bug.gif)
