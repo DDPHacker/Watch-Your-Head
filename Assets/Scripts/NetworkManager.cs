@@ -19,12 +19,12 @@ public class NetworkManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		UIWindow = GameObject.FindGameObjectWithTag("UICanvas");
-		loginWindow = UIWindow.transform.FindChild("Login").gameObject;
-		loadingText = UIWindow.transform.FindChild("Loading Text").GetComponent<Text>();
-		HPBar = UIWindow.transform.FindChild ("HPBar").gameObject;
-		usernameInput = loginWindow.transform.FindChild("Username Input").GetComponent<InputField>();
-		roomNameInput = loginWindow.transform.FindChild("Roomname Input").GetComponent<InputField>();
-		roomListInput = loginWindow.transform.FindChild("Roomname List").GetComponent<InputField>();
+		loginWindow = UIWindow.transform.Find("Login").gameObject;
+		loadingText = UIWindow.transform.Find("Loading Text").GetComponent<Text>();
+		HPBar = UIWindow.transform.Find ("HPBar").gameObject;
+		usernameInput = loginWindow.transform.Find("Username Input").GetComponent<InputField>();
+		roomNameInput = loginWindow.transform.Find("Roomname Input").GetComponent<InputField>();
+		roomListInput = loginWindow.transform.Find("Roomname List").GetComponent<InputField>();
 		PhotonNetwork.logLevel = PhotonLogLevel.Full;
 		PhotonNetwork.ConnectUsingSettings("v0.2");
 		StartCoroutine(UpdateStateText());
@@ -69,7 +69,7 @@ public class NetworkManager : MonoBehaviour {
 		PhotonNetwork.player.name = usernameInput.text;
 		StopCoroutine(UpdateStateText());
 		loginWindow.SetActive(false);
-		UIWindow.transform.FindChild ("Background").gameObject.SetActive (false);
+		UIWindow.transform.Find ("Background").gameObject.SetActive (false);
 		loadingText.gameObject.SetActive (false);
 		HPBar.SetActive (true);
 		StartCoroutine(SpawnPlayer());
