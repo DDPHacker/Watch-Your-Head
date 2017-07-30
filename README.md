@@ -2,7 +2,11 @@
 
 A multiplayer action game made by Unity3D for nwHack 2016!
 
-Watch your head!
+## Watch your head!
+
+* Jump and step on their head to deal damage!
+
+* Press `R` to regenerate current map for ALL PLAYER! Let's go crazy!!
 
 ## Screen shots
 
