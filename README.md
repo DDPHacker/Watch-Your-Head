@@ -2,7 +2,19 @@
 
 A multiplayer action game made by Unity3D for nwHack 2016!
 
-## Watch Your Head!
+## Instructions
+
+### Join the game
+
+* Enter your name and lobby name to create a lobby as shown in figure 1.
+
+* Choose a lobby and click `Join Game!` to play in other's lobby.
+
+### How to play
+
+* Press `space` to jump!
+
+* Press `A` and `D` to move left and rgiht!
 
 * Jump and step on their head to deal damage!
 
